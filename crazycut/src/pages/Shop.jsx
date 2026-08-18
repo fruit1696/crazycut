@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+import { supabase, fabricToFrontend } from '@/api/supabaseClient';
 import FabricCard from '@/components/FabricCard';
 import { BRANDS } from '@/lib/brands';
 import { SlidersHorizontal } from 'lucide-react';
@@ -8,11 +8,11 @@ import { useTranslation } from 'react-i18next';
 import { Slider } from '@/components/ui/slider';
 
 const FILTERS = {
-    brand: ['All', ...BRANDS],
-    fabric_type: ['All', 'Silk', 'Cotton', 'Linen', 'Wool', 'Blend'],
-    color_family: ['All', 'Neutral', 'Indigo', 'Earth', 'Jewel'],
-    pattern: ['All', 'Solid', 'Striped', 'Floral', 'Geometric', 'Jacquard'],
-    weight: ['All', 'Lightweight', 'Midweight', 'Heavyweight'],
+    brand: BRANDS,
+    fabric_type: ['Silk', 'Cotton', 'Linen', 'Wool', 'Blend'],
+    color_family: ['Neutral', 'Indigo', 'Earth', 'Jewel'],
+    pattern: ['Solid', 'Striped', 'Floral', 'Geometric', 'Jacquard'],
+    weight: ['Lightweight', 'Midweight', 'Heavyweight'],
 };
 
 export default function Shop() {
@@ -22,12 +22,16 @@ export default function Shop() {
     const [localPriceRange, setLocalPriceRange] = useState([200, 5000]);
 
     const filters = useMemo(() => {
+        const getArray = (key) => {
+            const val = searchParams.get(key);
+            return val ? val.split(',').filter(Boolean) : [];
+        };
         return {
-            brand: searchParams.get('brand') || 'All',
-            fabric_type: searchParams.get('fabric_type') || 'All',
-            color_family: searchParams.get('color_family') || 'All',
-            pattern: searchParams.get('pattern') || 'All',
-            weight: searchParams.get('weight') || 'All',
+            brand: getArray('brand'),
+            fabric_type: getArray('fabric_type'),
+            color_family: getArray('color_family'),
+            pattern: getArray('pattern'),
+            weight: getArray('weight'),
             min_price: searchParams.get('min_price') ? parseInt(searchParams.get('min_price'), 10) : 200,
             max_price: searchParams.get('max_price') ? parseInt(searchParams.get('max_price'), 10) : 5000,
         };
@@ -39,26 +43,45 @@ export default function Shop() {
 
     const sort = searchParams.get('sort') || 'featured';
 
-    const setFilters = (updater) => {
+    const setPriceRange = (min, max) => {
         setSearchParams(prev => {
-            const currentFilters = {
-                brand: prev.get('brand') || 'All',
-                fabric_type: prev.get('fabric_type') || 'All',
-                color_family: prev.get('color_family') || 'All',
-                pattern: prev.get('pattern') || 'All',
-                weight: prev.get('weight') || 'All',
-                min_price: prev.get('min_price') ? parseInt(prev.get('min_price'), 10) : 200,
-                max_price: prev.get('max_price') ? parseInt(prev.get('max_price'), 10) : 5000,
-            };
-            const updated = typeof updater === 'function' ? updater(currentFilters) : { ...currentFilters, ...updater };
-            
             const next = new URLSearchParams(prev);
-            Object.entries(updated).forEach(([k, v]) => {
-                if (v === 'All') next.delete(k);
-                else if (k === 'min_price' && v === 200) next.delete(k);
-                else if (k === 'max_price' && v === 5000) next.delete(k);
-                else next.set(k, v);
-            });
+            if (min === 200) next.delete('min_price'); else next.set('min_price', min);
+            if (max === 5000) next.delete('max_price'); else next.set('max_price', max);
+            return next;
+        }, { replace: true });
+    };
+
+    const toggleFilter = (key, value) => {
+        setSearchParams(prev => {
+            const next = new URLSearchParams(prev);
+            const current = next.get(key) ? next.get(key).split(',').filter(Boolean) : [];
+            let updated;
+            if (current.includes(value)) {
+                updated = current.filter(v => v !== value);
+            } else {
+                updated = [...current, value];
+            }
+            if (updated.length === 0) next.delete(key);
+            else next.set(key, updated.join(','));
+            return next;
+        }, { replace: true });
+    };
+
+    const clearCategory = (key) => {
+        setSearchParams(prev => {
+            const next = new URLSearchParams(prev);
+            next.delete(key);
+            return next;
+        }, { replace: true });
+    };
+
+    const clearFilters = () => {
+        setSearchParams(prev => {
+            const next = new URLSearchParams(prev);
+            Object.keys(FILTERS).forEach(k => next.delete(k));
+            next.delete('min_price');
+            next.delete('max_price');
             return next;
         }, { replace: true });
     };
@@ -75,7 +98,11 @@ export default function Shop() {
 
     useEffect(() => {
         (async () => {
-            try { setFabrics(await base44.entities.Fabric.list('-created_date', 100)); }
+            try {
+                const { data, error } = await supabase.from('fabrics').select('*').order('created_date', { ascending: false }).limit(100);
+                if (error) throw new Error(error.message);
+                setFabrics((data || []).map(fabricToFrontend));
+            }
             catch (e) { console.error(e); }
             setLoading(false);
         })();
@@ -83,11 +110,11 @@ export default function Shop() {
 
     const filtered = useMemo(() => {
         let list = fabrics.filter(f =>
-            (filters.brand === 'All' || f.brand === filters.brand) &&
-            (filters.fabric_type === 'All' || f.fabric_type === filters.fabric_type) &&
-            (filters.color_family === 'All' || f.color_family === filters.color_family) &&
-            (filters.pattern === 'All' || f.pattern === filters.pattern) &&
-            (filters.weight === 'All' || f.weight === filters.weight) &&
+            (filters.brand.length === 0 || filters.brand.includes(f.brand)) &&
+            (filters.fabric_type.length === 0 || filters.fabric_type.includes(f.fabric_type)) &&
+            (filters.color_family.length === 0 || filters.color_family.includes(f.color_family)) &&
+            (filters.pattern.length === 0 || filters.pattern.includes(f.pattern)) &&
+            (filters.weight.length === 0 || filters.weight.includes(f.weight)) &&
             (f.price >= filters.min_price && f.price <= filters.max_price));
         if (sort === 'price-asc') list = [...list].sort((a, b) => a.price - b.price);
         if (sort === 'price-desc') list = [...list].sort((a, b) => b.price - a.price);
@@ -104,9 +131,9 @@ export default function Shop() {
                     <h1 className="font-display text-4xl sm:text-5xl">{t('shop.headline')}</h1>
                     <p className="mt-3 text-muted-foreground max-w-lg">{t('shop.countLabel_other', { count: fabrics.length })}</p>
                     <div className="mt-6 flex gap-2 overflow-x-auto no-scrollbar pb-1">
-                        <button onClick={() => setFilters(s => ({ ...s, brand: 'All' }))} className={`flex-shrink-0 font-mono text-[10px] uppercase tracking-[0.16em] px-3 py-1.5 border transition-colors ${filters.brand === 'All' ? 'border-foreground bg-foreground text-background' : 'border-border text-foreground/70 hover:border-foreground'}`}>{t('shop.allBrands')}</button>
+                        <button onClick={() => clearCategory('brand')} className={`flex-shrink-0 font-mono text-[10px] uppercase tracking-[0.16em] px-3 py-1.5 border transition-colors ${filters.brand.length === 0 ? 'border-foreground bg-foreground text-background' : 'border-border text-foreground/70 hover:border-foreground'}`}>{t('shop.allBrands')}</button>
                         {BRANDS.map(b => (
-                            <button key={b} onClick={() => setFilters(s => ({ ...s, brand: b }))} className={`flex-shrink-0 font-mono text-[10px] uppercase tracking-[0.16em] px-3 py-1.5 border transition-colors ${filters.brand === b ? 'border-foreground bg-foreground text-background' : 'border-border text-foreground/70 hover:border-foreground'}`}>{b}</button>
+                            <button key={b} onClick={() => toggleFilter('brand', b)} className={`flex-shrink-0 font-mono text-[10px] uppercase tracking-[0.16em] px-3 py-1.5 border transition-colors ${filters.brand.includes(b) ? 'border-foreground bg-foreground text-background' : 'border-border text-foreground/70 hover:border-foreground'}`}>{b}</button>
                         ))}
                     </div>
                 </div>
@@ -115,7 +142,12 @@ export default function Shop() {
                 <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
                     <div className="flex flex-col lg:flex-row gap-10">
                         <aside className="lg:w-60 flex-shrink-0">
-                            <div className="flex items-center gap-2 mb-4"><SlidersHorizontal className="w-4 h-4 text-accent" /><span className="eyebrow">{t('shop.refine')}</span></div>
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="flex items-center gap-2"><SlidersHorizontal className="w-4 h-4 text-accent" /><span className="eyebrow">{t('shop.refine')}</span></div>
+                                {(Object.values(filters).some(v => Array.isArray(v) && v.length > 0) || filters.min_price > 200 || filters.max_price < 5000) && (
+                                    <button onClick={clearFilters} className="text-[10px] uppercase tracking-wider text-accent hover:underline">Clear All</button>
+                                )}
+                            </div>
                             <div className="flex lg:flex-col gap-6 lg:gap-8 overflow-x-auto no-scrollbar pb-2 lg:pb-0">
                                 <div className="min-w-[180px] lg:min-w-0">
                                     <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-8">Price Range</p>
@@ -126,16 +158,19 @@ export default function Shop() {
                                             step={100}
                                             value={localPriceRange}
                                             onValueChange={(val) => setLocalPriceRange(val)}
-                                            onValueCommit={(val) => setFilters(s => ({ ...s, min_price: val[0], max_price: val[1] }))}
+                                            onValueCommit={(val) => setPriceRange(val[0], val[1])}
                                         />
                                     </div>
                                 </div>
                                 {Object.entries(FILTERS).map(([key, opts]) => (
                                     <div key={key} className="min-w-[180px] lg:min-w-0">
-                                        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-3">{key.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())}</p>
+                                        <div className="flex items-center justify-between mb-3">
+                                            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{key.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())}</p>
+                                            {filters[key].length > 0 && <button onClick={() => clearCategory(key)} className="text-[9px] uppercase tracking-wider text-accent hover:underline">Clear</button>}
+                                        </div>
                                         <div className="flex flex-wrap lg:flex-col gap-2">
                                             {opts.map(o => (
-                                                <button key={o} onClick={() => setFilters(s => ({ ...s, [key]: o }))} className={`text-left font-mono text-xs uppercase tracking-[0.14em] px-3 py-1.5 border transition-colors ${filters[key] === o ? 'border-foreground bg-foreground text-background' : 'border-border text-foreground/70 hover:border-foreground'}`}>{o}</button>
+                                                <button key={o} onClick={() => toggleFilter(key, o)} className={`text-left font-mono text-xs uppercase tracking-[0.14em] px-3 py-1.5 border transition-colors ${filters[key].includes(o) ? 'border-foreground bg-foreground text-background' : 'border-border text-foreground/70 hover:border-foreground'}`}>{o}</button>
                                             ))}
                                         </div>
                                     </div>

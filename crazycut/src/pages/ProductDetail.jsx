@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Plus, Minus, Check } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
+import { supabase, fabricToFrontend } from '@/api/supabaseClient';
 import { Image } from '@/components/ui/image';
 import { formatINR } from '@/lib/format';
 import { useCart } from '@/lib/cartStore';
 
 import { useTranslation } from 'react-i18next';
-import { appParams } from '@/lib/app-params';
+
 
 export default function ProductDetail() {
     const { id } = useParams();
@@ -21,7 +21,11 @@ export default function ProductDetail() {
 
     useEffect(() => {
         (async () => {
-            try { setFabric(await base44.entities.Fabric.get(id)); }
+            try { 
+                const { data, error } = await supabase.from('fabrics').select('*').eq('id', id).single();
+                if (error) throw new Error(error.message);
+                setFabric(fabricToFrontend(data)); 
+            }
             catch (e) { console.error(e); }
             setLoading(false);
         })();
@@ -108,7 +112,7 @@ export default function ProductDetail() {
                                 <button onClick={() => addItem({ ...fabric }, qty, garment)} className="btn-loom-ghost flex-1">{t('product.addCutPiece')} <ArrowRight className="w-4 h-4" /></button>
                             </div>
                             <button onClick={() => {
-                                const STORE_PHONE = appParams.whatsappNumber;
+                                const STORE_PHONE = import.meta.env.VITE_WHATSAPP_NUMBER || "+919425333460";
                                 const text = `Hi, I'm interested in ${fabric.brand} ${fabric.name} (SKU: ${fabric.sku}), ₹${fabric.price}/m. I would like to know about availability and ordering. Product: ${window.location.href}${qty > 1 ? `\n\nQuantity desired: ${qty}m` : ''}`;
                                 window.open(`https://wa.me/${STORE_PHONE.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(text)}`, '_blank');
                             }} className="mt-4 w-full bg-[#128C7E] text-white font-mono text-xs uppercase tracking-[0.14em] py-4 px-6 flex items-center justify-center gap-3 transition-colors">

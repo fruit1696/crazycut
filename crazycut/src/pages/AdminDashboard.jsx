@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Boxes, Package, DollarSign, Plus, Pencil, Trash2, ArrowLeft } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
+import { supabase, fabricToFrontend } from '@/api/supabaseClient';
 import { Image } from '@/components/ui/image';
 import { formatINR } from '@/lib/format';
 
@@ -16,9 +16,22 @@ export default function AdminDashboard() {
   const load = async () => {
     setLoading(true);
     try {
-      const [f, o] = await Promise.all([base44.entities.Fabric.list('-created_date', 200), base44.entities.Order.list('-created_date', 200)]);
-      setFabrics(f); setOrders(o);
-    } catch (e) { console.error(e); }
+      const [
+        { data: fData, error: fError },
+        { data: oData, error: oError }
+      ] = await Promise.all([
+        supabase.from('fabrics').select('*').order('created_date', { ascending: false }).limit(200),
+        supabase.from('orders').select('*, items:order_items(*)').order('created_date', { ascending: false }).limit(200)
+      ]);
+      
+      if (fError) throw new Error(fError.message);
+      if (oError) throw new Error(oError.message);
+      
+      setFabrics((fData || []).map(fabricToFrontend));
+      setOrders(oData || []);
+    } catch (e) {
+      console.error(e);
+    }
     setLoading(false);
   };
   useEffect(() => { load(); }, []);
@@ -27,10 +40,15 @@ export default function AdminDashboard() {
 
   const deleteFabric = async (id) => {
     if (!confirm('Delete this cut piece?')) return;
-    await base44.entities.Fabric.delete(id);
+    const { error } = await supabase.from('fabrics').delete().eq('id', id);
+    if (error) console.error(error.message);
     load();
   };
-  const updateStatus = async (id, status) => { await base44.entities.Order.update(id, { status }); load(); };
+  const updateStatus = async (id, status) => { 
+    const { error } = await supabase.from('orders').update({ status }).eq('id', id);
+    if (error) console.error(error.message);
+    load(); 
+  };
 
   const stats = [
     { icon: Boxes, label: 'Cut pieces', value: fabrics.length },

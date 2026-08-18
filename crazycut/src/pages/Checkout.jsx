@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Check, ArrowRight } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
+import { supabase } from '@/api/supabaseClient';
 import { useCart } from '@/lib/cartStore';
 import { Image } from '@/components/ui/image';
 import { formatINR } from '@/lib/format';
@@ -20,13 +20,30 @@ export default function Checkout() {
         if (items.length === 0) return;
         setPlacing(true);
         try {
-            const order = await base44.entities.Order.create({
-                items: items.map(i => ({ fabric_id: i.fabric_id, fabric_name: i.fabric_name, brand: i.brand, price: i.price, quantity: i.quantity, garment_type: i.garment_type, image_url: i.image_url })),
+            const orderId = crypto.randomUUID();
+            const orderData = {
+                id: orderId,
                 subtotal, total: subtotal, status: 'pending', payment_method: 'cod',
                 shipping_name: form.shipping_name, shipping_phone: form.shipping_phone, shipping_address: form.shipping_address, shipping_city: form.shipping_city, shipping_state: form.shipping_state, shipping_zip: form.shipping_zip, shipping_country: form.shipping_country, notes: form.notes
-            });
+            };
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                orderData.user_id = session.user.id;
+            } else {
+                orderData.user_id = null;
+            }
+
+            const { error: orderErr } = await supabase.from('orders').insert(orderData);
+            if (orderErr) throw new Error(orderErr.message);
+
+            const itemsPayload = items.map(i => ({ fabric_id: i.fabric_id, fabric_name: i.fabric_name, brand: i.brand, price: i.price, quantity: i.quantity, garment_type: i.garment_type, image_url: i.image_url, order_id: orderId }));
+            if (itemsPayload.length > 0) {
+                const { error: itemsErr } = await supabase.from('order_items').insert(itemsPayload);
+                if (itemsErr) throw new Error(itemsErr.message);
+            }
+
             clear();
-            setPlaced(order);
+            setPlaced({ ...orderData, id: orderId });
         } catch (err) { console.error(err); alert('Could not place order. Please try again.'); }
         setPlacing(false);
     };
@@ -37,8 +54,8 @@ export default function Checkout() {
                 <div className="max-w-lg text-center animate-scale-in">
                     <div className="w-16 h-16 mx-auto rounded-full border border-accent flex items-center justify-center mb-8"><Check className="w-7 h-7 text-accent" /></div>
                     <p className="eyebrow mb-4">Order received</p>
-                    <h1 className="font-display text-5xl">Your cut is queued.</h1>
-                    <p className="mt-5 text-muted-foreground">Order <span className="font-mono text-foreground">{placed.id}</span> · from the loom to your doorstep.</p>
+                    <h1 className="font-display text-5xl">Your order is confirmed.</h1>
+                    <p className="mt-5 text-muted-foreground">We've received your cut pieces and will start preparing them shortly.</p>
                     <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.2em] text-accent">Cash on Delivery confirmed</p>
                     <div className="mt-10 flex justify-center gap-4">
                         <button onClick={() => navigate('/orders')} className="btn-loom-solid">Track your order <ArrowRight className="w-4 h-4" /></button>
