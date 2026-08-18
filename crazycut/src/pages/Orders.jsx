@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Package, ArrowRight } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
+import { supabase } from '@/api/supabaseClient';
 import { Image } from '@/components/ui/image';
 import { formatINR } from '@/lib/format';
 
@@ -13,7 +13,11 @@ export default function Orders() {
 
     useEffect(() => {
         (async () => {
-            try { setOrders(await base44.entities.Order.filter({}, '-created_date', 50)); }
+            try {
+                const { data, error } = await supabase.from('orders').select('*, items:order_items(*)').order('created_date', { ascending: false }).limit(50);
+                if (error) throw new Error(error.message);
+                setOrders(data || []);
+            }
             catch (e) { console.error(e); }
             setLoading(false);
         })();

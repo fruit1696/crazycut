@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, BadgeCheck, Scissors } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
+import { supabase, fabricToFrontend } from '@/api/supabaseClient';
 import { Image } from '@/components/ui/image';
 import FabricCard from '@/components/FabricCard';
 import { useTranslation } from 'react-i18next';
@@ -14,7 +14,11 @@ export default function Home() {
 
     useEffect(() => {
         (async () => {
-            try { setFabrics(await base44.entities.Fabric.list('-created_date', 50)); }
+            try {
+                const { data, error } = await supabase.from('fabrics').select('*').order('created_date', { ascending: false }).limit(50);
+                if (error) throw new Error(error.message);
+                setFabrics((data || []).map(fabricToFrontend));
+            }
             catch (e) { console.error(e); }
             setLoading(false);
         })();

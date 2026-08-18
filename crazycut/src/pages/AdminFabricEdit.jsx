@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Upload, Loader2 } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
+import { supabase, fabricToFrontend, fabricToDb } from '@/api/supabaseClient';
 import { Image } from '@/components/ui/image';
 import { BRANDS } from '@/lib/brands';
 
@@ -34,7 +34,12 @@ export default function AdminFabricEdit() {
     useEffect(() => {
         if (!id) return;
         (async () => {
-            try { const f = await base44.entities.Fabric.get(id); setForm({ ...empty, ...f }); }
+            try { 
+                const { data, error } = await supabase.from('fabrics').select('*').eq('id', id).single();
+                if (error) throw new Error(error.message);
+                const f = fabricToFrontend(data);
+                setForm({ ...empty, ...f }); 
+            }
             catch (e) { console.error(e); }
         })();
     }, [id]);
@@ -46,7 +51,12 @@ export default function AdminFabricEdit() {
         if (!file) return;
         setUploading(true);
         try {
-            const { file_url } = await base44.integrations.Core.UploadFile({ file });
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Date.now()}_${Math.random()}.${fileExt}`;
+            const { error: uploadError } = await supabase.storage.from('fabrics').upload(fileName, file);
+            if (uploadError) throw new Error(uploadError.message);
+            const { data: { publicUrl } } = supabase.storage.from('fabrics').getPublicUrl(fileName);
+            const file_url = publicUrl;
             set(field, file_url);
         } catch (err) { console.error(err); alert('Upload failed'); }
         setUploading(false);
@@ -57,8 +67,13 @@ export default function AdminFabricEdit() {
         setSaving(true);
         try {
             const payload = { ...form, price: Number(form.price), width_inches: Number(form.width_inches), stock_quantity: Number(form.stock_quantity), featured: Boolean(form.featured) };
-            if (editing) await base44.entities.Fabric.update(id, payload);
-            else await base44.entities.Fabric.create(payload);
+            if (editing) {
+                const { error } = await supabase.from('fabrics').update(fabricToDb(payload)).eq('id', id);
+                if (error) throw new Error(error.message);
+            } else {
+                const { error } = await supabase.from('fabrics').insert(fabricToDb(payload));
+                if (error) throw new Error(error.message);
+            }
             navigate('/admin');
         } catch (err) { console.error(err); alert('Save failed'); }
         setSaving(false);

@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { base44, supabase } from '@/api/base44Client';
+import { supabase } from '@/api/supabaseClient';
 
 const AuthContext = createContext();
 
@@ -33,9 +33,15 @@ export const AuthProvider = ({ children }) => {
   const checkUserAuth = async () => {
     try {
       setIsLoadingAuth(true);
-      const currentUser = await base44.auth.me();
-      setUser(currentUser);
-      setIsAuthenticated(true);
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error || !session) {
+        setUser(null);
+        setIsAuthenticated(false);
+      } else {
+        const u = session.user;
+        setUser({ ...u, role: u.app_metadata?.role || 'user' });
+        setIsAuthenticated(true);
+      }
     } catch {
       setUser(null);
       setIsAuthenticated(false);
@@ -48,11 +54,14 @@ export const AuthProvider = ({ children }) => {
   const logout = async (shouldRedirect = true) => {
     setUser(null);
     setIsAuthenticated(false);
-    await base44.auth.logout(shouldRedirect ? window.location.href : undefined);
+    await supabase.auth.signOut();
+    if (shouldRedirect) {
+      window.location.href = window.location.href;
+    }
   };
 
   const navigateToLogin = () => {
-    base44.auth.redirectToLogin(window.location.href);
+    window.location.href = `/login?returnTo=${encodeURIComponent(window.location.href)}`;
   };
 
   return (
