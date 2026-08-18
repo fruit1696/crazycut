@@ -20,6 +20,7 @@ export default function Shop() {
     const [loading, setLoading] = useState(true);
     const [searchParams, setSearchParams] = useSearchParams();
     const [localPriceRange, setLocalPriceRange] = useState([200, 5000]);
+    const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
     const filters = useMemo(() => {
         const getArray = (key) => {
@@ -108,6 +109,37 @@ export default function Shop() {
         })();
     }, []);
 
+    const renderFilterContent = () => (
+        <>
+            <div className="mb-8">
+                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-4">Price Range</p>
+                <div className="px-1 mb-2">
+                    <Slider
+                        min={200}
+                        max={5000}
+                        step={100}
+                        value={localPriceRange}
+                        onValueChange={(val) => setLocalPriceRange(val)}
+                        onValueCommit={(val) => setPriceRange(val[0], val[1])}
+                    />
+                </div>
+            </div>
+            {Object.entries(FILTERS).map(([key, opts]) => (
+                <div key={key} className="mb-8">
+                    <div className="flex items-center justify-between mb-3">
+                        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{key.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())}</p>
+                        {filters[key].length > 0 && <button onClick={() => clearCategory(key)} className="text-[9px] uppercase tracking-wider text-accent hover:underline">Clear</button>}
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                        {opts.map(o => (
+                            <button key={o} onClick={() => toggleFilter(key, o)} className={`text-left font-mono text-xs uppercase tracking-[0.14em] px-3 py-1.5 border transition-colors ${filters[key].includes(o) ? 'border-foreground bg-foreground text-background' : 'border-border text-foreground/70 hover:border-foreground'}`}>{o}</button>
+                        ))}
+                    </div>
+                </div>
+            ))}
+        </>
+    );
+
     const filtered = useMemo(() => {
         let list = fabrics.filter(f =>
             (filters.brand.length === 0 || filters.brand.includes(f.brand)) &&
@@ -130,7 +162,7 @@ export default function Shop() {
                     <p className="eyebrow mb-3">{t('shop.eyebrow')}</p>
                     <h1 className="font-display text-4xl sm:text-5xl">{t('shop.headline')}</h1>
                     <p className="mt-3 text-muted-foreground max-w-lg">{t('shop.countLabel_other', { count: fabrics.length })}</p>
-                    <div className="mt-6 flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                    <div className="mt-6 hidden lg:flex gap-2 overflow-x-auto no-scrollbar pb-1">
                         <button onClick={() => clearCategory('brand')} className={`flex-shrink-0 font-mono text-[10px] uppercase tracking-[0.16em] px-3 py-1.5 border transition-colors ${filters.brand.length === 0 ? 'border-foreground bg-foreground text-background' : 'border-border text-foreground/70 hover:border-foreground'}`}>{t('shop.allBrands')}</button>
                         {BRANDS.map(b => (
                             <button key={b} onClick={() => toggleFilter('brand', b)} className={`flex-shrink-0 font-mono text-[10px] uppercase tracking-[0.16em] px-3 py-1.5 border transition-colors ${filters.brand.includes(b) ? 'border-foreground bg-foreground text-background' : 'border-border text-foreground/70 hover:border-foreground'}`}>{b}</button>
@@ -141,45 +173,23 @@ export default function Shop() {
             <section className="py-6 lg:py-8">
                 <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
                     <div className="flex flex-col lg:flex-row gap-10">
-                        <aside className="lg:w-60 flex-shrink-0">
+                        <aside className="hidden lg:block lg:w-60 flex-shrink-0">
                             <div className="flex items-center justify-between mb-4">
                                 <div className="flex items-center gap-2"><SlidersHorizontal className="w-4 h-4 text-accent" /><span className="eyebrow">{t('shop.refine')}</span></div>
                                 {(Object.values(filters).some(v => Array.isArray(v) && v.length > 0) || filters.min_price > 200 || filters.max_price < 5000) && (
                                     <button onClick={clearFilters} className="text-[10px] uppercase tracking-wider text-accent hover:underline">Clear All</button>
                                 )}
                             </div>
-                            <div className="flex lg:flex-col gap-6 lg:gap-8 overflow-x-auto no-scrollbar pb-2 lg:pb-0">
-                                <div className="min-w-[180px] lg:min-w-0">
-                                    <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-8">Price Range</p>
-                                    <div className="px-1 mb-2">
-                                        <Slider
-                                            min={200}
-                                            max={5000}
-                                            step={100}
-                                            value={localPriceRange}
-                                            onValueChange={(val) => setLocalPriceRange(val)}
-                                            onValueCommit={(val) => setPriceRange(val[0], val[1])}
-                                        />
-                                    </div>
-                                </div>
-                                {Object.entries(FILTERS).map(([key, opts]) => (
-                                    <div key={key} className="min-w-[180px] lg:min-w-0">
-                                        <div className="flex items-center justify-between mb-3">
-                                            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{key.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())}</p>
-                                            {filters[key].length > 0 && <button onClick={() => clearCategory(key)} className="text-[9px] uppercase tracking-wider text-accent hover:underline">Clear</button>}
-                                        </div>
-                                        <div className="flex flex-wrap lg:flex-col gap-2">
-                                            {opts.map(o => (
-                                                <button key={o} onClick={() => toggleFilter(key, o)} className={`text-left font-mono text-xs uppercase tracking-[0.14em] px-3 py-1.5 border transition-colors ${filters[key].includes(o) ? 'border-foreground bg-foreground text-background' : 'border-border text-foreground/70 hover:border-foreground'}`}>{o}</button>
-                                            ))}
-                                        </div>
-                                    </div>
-                                ))}
+                            <div className="flex flex-col gap-2">
+                                {renderFilterContent()}
                             </div>
                         </aside>
                         <div className="flex-1">
-                            <div className="flex items-center justify-between mb-6 pb-3 border-b border-border">
-                                <p className="font-mono text-xs text-muted-foreground">{t('shop.results_other', { count: filtered.length })}</p>
+                            <div className="flex flex-wrap items-center justify-between gap-4 mb-6 pb-3 border-b border-border">
+                                <div className="flex items-center gap-4">
+                                    <button onClick={() => setMobileFiltersOpen(true)} className="lg:hidden font-mono text-[10px] uppercase tracking-[0.16em] border border-border px-4 py-2 flex items-center gap-2 hover:border-foreground transition-colors"><SlidersHorizontal className="w-3.5 h-3.5" /> Filters</button>
+                                    <p className="font-mono text-xs text-muted-foreground hidden sm:block">{t('shop.results_other', { count: filtered.length })}</p>
+                                </div>
                                 <label className="flex items-center gap-3">
                                     <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{t('shop.sort')}</span>
                                     <select value={sort} onChange={e => setSort(e.target.value)} className="font-mono text-xs bg-transparent border-b border-border py-1 focus:outline-none">
@@ -201,6 +211,35 @@ export default function Shop() {
                     </div>
                 </div>
             </section>
+            
+            {mobileFiltersOpen && (
+                <div className="fixed inset-0 z-50 flex flex-col bg-background lg:hidden">
+                    <div className="flex items-center justify-between px-6 py-5 border-b border-border">
+                        <span className="font-display text-2xl">Filters</span>
+                        {(Object.values(filters).some(v => Array.isArray(v) && v.length > 0) || filters.min_price > 200 || filters.max_price < 5000) && (
+                            <button onClick={clearFilters} className="font-mono text-[10px] uppercase tracking-[0.16em] text-accent hover:underline">Clear All</button>
+                        )}
+                    </div>
+                    <div className="flex-1 overflow-y-auto px-6 py-6">
+                        <div className="mb-8">
+                            <div className="flex items-center justify-between mb-3">
+                                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Brand</p>
+                                {filters.brand.length > 0 && <button onClick={() => clearCategory('brand')} className="text-[9px] uppercase tracking-wider text-accent hover:underline">Clear</button>}
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                                {BRANDS.map(b => (
+                                    <button key={b} onClick={() => toggleFilter('brand', b)} className={`text-left font-mono text-xs uppercase tracking-[0.14em] px-3 py-1.5 border transition-colors ${filters.brand.includes(b) ? 'border-foreground bg-foreground text-background' : 'border-border text-foreground/70 hover:border-foreground'}`}>{b}</button>
+                                ))}
+                            </div>
+                        </div>
+                        {renderFilterContent()}
+                    </div>
+                    <div className="px-6 py-5 border-t border-border flex gap-4">
+                        <button onClick={() => setMobileFiltersOpen(false)} className="flex-1 font-mono text-xs uppercase tracking-[0.14em] px-4 py-4 border border-border text-foreground hover:border-foreground transition-colors">Close</button>
+                        <button onClick={() => setMobileFiltersOpen(false)} className="flex-1 font-mono text-xs uppercase tracking-[0.14em] px-4 py-4 bg-foreground text-background hover:bg-foreground/90 transition-colors">Apply</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
