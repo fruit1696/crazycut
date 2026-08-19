@@ -113,7 +113,7 @@ export default function Shop() {
         <>
             <div className="mb-8">
                 <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-4">Price Range</p>
-                <div className="px-1 mb-2">
+                <div className="px-1 pt-4 min-[769px]:pt-0 mb-2">
                     <Slider
                         min={200}
                         max={5000}
@@ -156,13 +156,13 @@ export default function Shop() {
     }, [fabrics, filters, sort]);
 
     return (
-        <div className="pt-[112px]">
-            <section className="py-10 lg:py-12 border-b border-border">
-                <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
+        <div className="pt-[112px] overflow-x-hidden">
+            <section className="py-10 min-[769px]:py-12 border-b border-border">
+                <div className="mx-auto max-w-[1400px] px-6 min-[769px]:px-10">
                     <p className="eyebrow mb-3">{t('shop.eyebrow')}</p>
                     <h1 className="font-display text-4xl sm:text-5xl">{t('shop.headline')}</h1>
                     <p className="mt-3 text-muted-foreground max-w-lg">{t('shop.countLabel_other', { count: fabrics.length })}</p>
-                    <div className="mt-6 hidden lg:flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                    <div className="mt-6 hidden min-[769px]:flex gap-2 overflow-x-auto no-scrollbar pb-1">
                         <button onClick={() => clearCategory('brand')} className={`flex-shrink-0 font-mono text-[10px] uppercase tracking-[0.16em] px-3 py-1.5 border transition-colors ${filters.brand.length === 0 ? 'border-foreground bg-foreground text-background' : 'border-border text-foreground/70 hover:border-foreground'}`}>{t('shop.allBrands')}</button>
                         {BRANDS.map(b => (
                             <button key={b} onClick={() => toggleFilter('brand', b)} className={`flex-shrink-0 font-mono text-[10px] uppercase tracking-[0.16em] px-3 py-1.5 border transition-colors ${filters.brand.includes(b) ? 'border-foreground bg-foreground text-background' : 'border-border text-foreground/70 hover:border-foreground'}`}>{b}</button>
@@ -170,10 +170,10 @@ export default function Shop() {
                     </div>
                 </div>
             </section>
-            <section className="py-6 lg:py-8">
-                <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
-                    <div className="flex flex-col lg:flex-row gap-10">
-                        <aside className="hidden lg:block lg:w-60 flex-shrink-0">
+            <section className="py-6 min-[769px]:py-8">
+                <div className="mx-auto max-w-[1400px] px-6 min-[769px]:px-10">
+                    <div className="flex flex-col min-[769px]:flex-row gap-10">
+                        <aside className="hidden min-[769px]:block min-[769px]:w-60 flex-shrink-0">
                             <div className="flex items-center justify-between mb-4">
                                 <div className="flex items-center gap-2"><SlidersHorizontal className="w-4 h-4 text-accent" /><span className="eyebrow">{t('shop.refine')}</span></div>
                                 {(Object.values(filters).some(v => Array.isArray(v) && v.length > 0) || filters.min_price > 200 || filters.max_price < 5000) && (
@@ -184,10 +184,10 @@ export default function Shop() {
                                 {renderFilterContent()}
                             </div>
                         </aside>
-                        <div className="flex-1">
+                        <div className="min-w-0 flex-1">
                             <div className="flex flex-wrap items-center justify-between gap-4 mb-6 pb-3 border-b border-border">
                                 <div className="flex items-center gap-4">
-                                    <button onClick={() => setMobileFiltersOpen(true)} className="lg:hidden font-mono text-[10px] uppercase tracking-[0.16em] border border-border px-4 py-2 flex items-center gap-2 hover:border-foreground transition-colors"><SlidersHorizontal className="w-3.5 h-3.5" /> Filters</button>
+                                    <button onClick={() => setMobileFiltersOpen(true)} className="min-[769px]:hidden font-mono text-[10px] uppercase tracking-[0.16em] border border-border px-4 py-2 flex items-center gap-2 hover:border-foreground transition-colors"><SlidersHorizontal className="w-3.5 h-3.5" /> Filters</button>
                                     <p className="font-mono text-xs text-muted-foreground hidden sm:block">{t('shop.results_other', { count: filtered.length })}</p>
                                 </div>
                                 <label className="flex items-center gap-3">
@@ -201,11 +201,11 @@ export default function Shop() {
                                 </label>
                             </div>
                             {loading ? (
-                                <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12">{Array.from({ length: 6 }).map((_, i) => <div key={i} className="aspect-[4/5] bg-muted animate-pulse" />)}</div>
+                                <div className="grid grid-cols-2 min-[769px]:grid-cols-3 gap-x-6 gap-y-12">{Array.from({ length: 6 }).map((_, i) => <div key={i} className="aspect-[4/5] bg-muted animate-pulse" />)}</div>
                             ) : filtered.length === 0 ? (
                                 <div className="py-24 text-center"><p className="font-display text-3xl">{t('shop.noMatch')}</p><p className="text-muted-foreground mt-2">{t('shop.noMatchSub')}</p></div>
                             ) : (
-                                <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12">{filtered.map(f => <FabricCard key={f.id} fabric={f} />)}</div>
+                                <div className="grid grid-cols-2 min-[769px]:grid-cols-3 gap-x-6 gap-y-12">{filtered.map(f => <FabricCard key={f.id} fabric={f} />)}</div>
                             )}
                         </div>
                     </div>
@@ -213,28 +213,17 @@ export default function Shop() {
             </section>
             
             {mobileFiltersOpen && (
-                <div className="fixed inset-0 z-50 flex flex-col bg-background lg:hidden">
-                    <div className="flex items-center justify-between px-6 py-5 border-b border-border">
+                <div className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-background min-[769px]:hidden">
+                    <div className="flex shrink-0 items-center justify-between px-6 py-5 border-b border-border">
                         <span className="font-display text-2xl">Filters</span>
                         {(Object.values(filters).some(v => Array.isArray(v) && v.length > 0) || filters.min_price > 200 || filters.max_price < 5000) && (
                             <button onClick={clearFilters} className="font-mono text-[10px] uppercase tracking-[0.16em] text-accent hover:underline">Clear All</button>
                         )}
                     </div>
-                    <div className="flex-1 overflow-y-auto px-6 py-6">
-                        <div className="mb-8">
-                            <div className="flex items-center justify-between mb-3">
-                                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Brand</p>
-                                {filters.brand.length > 0 && <button onClick={() => clearCategory('brand')} className="text-[9px] uppercase tracking-wider text-accent hover:underline">Clear</button>}
-                            </div>
-                            <div className="flex flex-wrap gap-2">
-                                {BRANDS.map(b => (
-                                    <button key={b} onClick={() => toggleFilter('brand', b)} className={`text-left font-mono text-xs uppercase tracking-[0.14em] px-3 py-1.5 border transition-colors ${filters.brand.includes(b) ? 'border-foreground bg-foreground text-background' : 'border-border text-foreground/70 hover:border-foreground'}`}>{b}</button>
-                                ))}
-                            </div>
-                        </div>
+                    <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-6 py-6">
                         {renderFilterContent()}
                     </div>
-                    <div className="px-6 py-5 border-t border-border flex gap-4">
+                    <div className="flex shrink-0 gap-4 px-6 py-5 border-t border-border">
                         <button onClick={() => setMobileFiltersOpen(false)} className="flex-1 font-mono text-xs uppercase tracking-[0.14em] px-4 py-4 border border-border text-foreground hover:border-foreground transition-colors">Close</button>
                         <button onClick={() => setMobileFiltersOpen(false)} className="flex-1 font-mono text-xs uppercase tracking-[0.14em] px-4 py-4 bg-foreground text-background hover:bg-foreground/90 transition-colors">Apply</button>
                     </div>

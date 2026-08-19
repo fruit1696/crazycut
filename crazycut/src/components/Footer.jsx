@@ -15,7 +15,7 @@ export default function Footer() {
               Visit Our Physical Store in Khargone
             </p>
             <h2 className="font-display text-4xl sm:text-5xl leading-tight mb-4">
-              क्रेजी कटपीस
+              Crazy CutPiece
             </h2>
             <p className="text-foreground/80 text-lg leading-relaxed mb-6 max-w-lg">
               Serving Khargone with premium unstitched suit & shirt materials for over 15+ years. Now delivering nationwide!
