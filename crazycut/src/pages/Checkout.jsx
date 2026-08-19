@@ -36,7 +36,7 @@ export default function Checkout() {
             const { error: orderErr } = await supabase.from('orders').insert(orderData);
             if (orderErr) throw new Error(orderErr.message);
 
-            const itemsPayload = items.map(i => ({ fabric_id: i.fabric_id, fabric_name: i.fabric_name, brand: i.brand, price: i.price, quantity: i.quantity, garment_type: i.garment_type, image_url: i.image_url, order_id: orderId }));
+            const itemsPayload = items.map(i => ({ fabric_id: i.fabric_id, fabric_name: i.fabric_name, brand: i.brand, price: i.price, quantity: i.quantity, image_url: i.image_url, order_id: orderId }));
             if (itemsPayload.length > 0) {
                 const { error: itemsErr } = await supabase.from('order_items').insert(itemsPayload);
                 if (itemsErr) throw new Error(itemsErr.message);
@@ -103,7 +103,7 @@ export default function Checkout() {
                                     <div className="w-16 h-20 overflow-hidden bg-muted"><Image src={i.image_url} fittingType="fill" className="w-full h-full" /></div>
                                     <div className="flex-1">
                                         <p className="font-display text-lg leading-tight">{i.fabric_name}</p>
-                                        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground mt-1">{i.quantity}m {i.garment_type ? `· ${i.garment_type}` : ''}</p>
+                                        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent mt-1">{i.quantity} {i.quantity === 1 ? '2-piece set' : '2-piece sets'}</p>
                                     </div>
                                     <span className="font-mono text-sm">{formatINR(i.price * i.quantity)}</span>
                                 </li>

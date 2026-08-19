@@ -38,13 +38,13 @@ export default function CartDrawer() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-display text-lg leading-tight truncate">{item.fabric_name}</h3>
-                    {item.garment_type && <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground mt-1">For: {item.garment_type}</p>}
-                    <p className="font-mono text-sm text-foreground mt-2">{formatINR(item.price)}/m</p>
+                    <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent mt-1">2-piece Raymond shirt set</p>
+                    <p className="font-mono text-sm text-foreground mt-2">{formatINR(item.price)} / 2-piece set</p>
                     <div className="flex items-center justify-between mt-3">
                       <div className="flex items-center border border-border">
-                        <button onClick={() => updateQty(item.key, item.quantity - 1)} className="px-2 py-1.5 hover:bg-muted" aria-label="Decrease metres"><Minus className="w-3.5 h-3.5" /></button>
-                        <span className="px-3 font-mono text-sm">{item.quantity}</span>
-                        <button onClick={() => updateQty(item.key, item.quantity + 1)} className="px-2 py-1.5 hover:bg-muted" aria-label="Increase metres"><Plus className="w-3.5 h-3.5" /></button>
+                        <button onClick={() => updateQty(item.key, item.quantity - 1)} className="px-2 py-1.5 hover:bg-muted" aria-label="Decrease sets"><Minus className="w-3.5 h-3.5" /></button>
+                        <span className="px-3 font-mono text-sm">{item.quantity} {item.quantity === 1 ? 'set' : 'sets'}</span>
+                        <button onClick={() => updateQty(item.key, item.quantity + 1)} className="px-2 py-1.5 hover:bg-muted" aria-label="Increase sets"><Plus className="w-3.5 h-3.5" /></button>
                       </div>
                       <button onClick={() => removeItem(item.key)} className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground">Remove</button>
                     </div>

@@ -2,13 +2,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { supabase, fabricToFrontend } from '@/api/supabaseClient';
 import FabricCard from '@/components/FabricCard';
-import { BRANDS } from '@/lib/brands';
 import { SlidersHorizontal } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Slider } from '@/components/ui/slider';
 
 const FILTERS = {
-    brand: BRANDS,
     fabric_type: ['Silk', 'Cotton', 'Linen', 'Wool', 'Blend'],
     color_family: ['Neutral', 'Indigo', 'Earth', 'Jewel'],
     pattern: ['Solid', 'Striped', 'Floral', 'Geometric', 'Jacquard'],
@@ -28,7 +26,6 @@ export default function Shop() {
             return val ? val.split(',').filter(Boolean) : [];
         };
         return {
-            brand: getArray('brand'),
             fabric_type: getArray('fabric_type'),
             color_family: getArray('color_family'),
             pattern: getArray('pattern'),
@@ -142,7 +139,6 @@ export default function Shop() {
 
     const filtered = useMemo(() => {
         let list = fabrics.filter(f =>
-            (filters.brand.length === 0 || filters.brand.includes(f.brand)) &&
             (filters.fabric_type.length === 0 || filters.fabric_type.includes(f.fabric_type)) &&
             (filters.color_family.length === 0 || filters.color_family.includes(f.color_family)) &&
             (filters.pattern.length === 0 || filters.pattern.includes(f.pattern)) &&
@@ -162,12 +158,6 @@ export default function Shop() {
                     <p className="eyebrow mb-3">{t('shop.eyebrow')}</p>
                     <h1 className="font-display text-4xl sm:text-5xl">{t('shop.headline')}</h1>
                     <p className="mt-3 text-muted-foreground max-w-lg">{t('shop.countLabel_other', { count: fabrics.length })}</p>
-                    <div className="mt-6 hidden min-[769px]:flex gap-2 overflow-x-auto no-scrollbar pb-1">
-                        <button onClick={() => clearCategory('brand')} className={`flex-shrink-0 font-mono text-[10px] uppercase tracking-[0.16em] px-3 py-1.5 border transition-colors ${filters.brand.length === 0 ? 'border-foreground bg-foreground text-background' : 'border-border text-foreground/70 hover:border-foreground'}`}>{t('shop.allBrands')}</button>
-                        {BRANDS.map(b => (
-                            <button key={b} onClick={() => toggleFilter('brand', b)} className={`flex-shrink-0 font-mono text-[10px] uppercase tracking-[0.16em] px-3 py-1.5 border transition-colors ${filters.brand.includes(b) ? 'border-foreground bg-foreground text-background' : 'border-border text-foreground/70 hover:border-foreground'}`}>{b}</button>
-                        ))}
-                    </div>
                 </div>
             </section>
             <section className="py-6 min-[769px]:py-8">
