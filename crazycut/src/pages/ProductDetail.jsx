@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Plus, Minus, Check } from 'lucide-react';
 import { supabase, fabricToFrontend } from '@/api/supabaseClient';
 import { Image } from '@/components/ui/image';
 import { formatINR } from '@/lib/format';
 import { useCart } from '@/lib/cartStore';
+import Reviews, { ReviewSummary } from '@/components/Reviews';
 
 import { useTranslation } from 'react-i18next';
 
@@ -17,6 +18,7 @@ export default function ProductDetail() {
     const [qty, setQty] = useState(1);
     const [garment, setGarment] = useState('Shirt');
     const [zoom, setZoom] = useState(false);
+    const location = useLocation();
     const { t } = useTranslation();
 
     useEffect(() => {
@@ -30,6 +32,12 @@ export default function ProductDetail() {
             setLoading(false);
         })();
     }, [id]);
+
+    useEffect(() => {
+        if (fabric && location.hash === '#reviews') {
+            document.getElementById('reviews')?.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [fabric, location.hash]);
 
     if (loading) return <div className="pt-[112px] min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-4 border-border border-t-foreground rounded-full animate-spin" /></div>;
     if (!fabric) return <div className="pt-[112px] min-h-screen flex flex-col items-center justify-center gap-4"><p className="font-display text-4xl">{t('product.notFound')}</p><Link to="/shop" className="btn-loom-ghost">{t('product.backToGallery')}</Link></div>;
@@ -61,30 +69,9 @@ export default function ProductDetail() {
                     </div>
                     <div className="lg:py-4">
                         <p className="eyebrow mb-4">{fabric.brand} · {fabric.sku}</p>
-                        {/* Star Rating */}
-                        <div className="flex items-center gap-2 mb-4">
-                            <span className="inline-flex items-center gap-0.5">
-                                {Array.from({ length: 5 }).map((_, i) => {
-                                    const seed = [...String(fabric.id || '')].reduce((s, c) => s + c.charCodeAt(0), 0);
-                                    const rating = 4.5 + ((seed % 5) / 10);
-                                    const full = Math.floor(rating);
-                                    const half = rating - full >= 0.5;
-                                    return (
-                                        <svg key={i} viewBox="0 0 12 12" className="w-4 h-4" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M6 1l1.236 2.505L10 3.91l-2 1.949.472 2.752L6 7.25 3.528 8.611 4 5.86 2 3.91l2.764-.405L6 1z"
-                                                fill={i < full || (i === full && half) ? '#C5A059' : 'none'}
-                                                stroke="#C5A059" strokeWidth="0.8" />
-                                        </svg>
-                                    );
-                                })}
-                            </span>
-                            <span className="font-mono text-sm text-[#C5A059]">
-                                {(4.5 + ((([...String(fabric.id || '')].reduce((s, c) => s + c.charCodeAt(0), 0)) % 5) / 10)).toFixed(1)}
-                            </span>
-                            <span className="font-mono text-[11px] text-muted-foreground">
-                                ({28 + (([...String(fabric.id || '')].reduce((s, c) => s + c.charCodeAt(0), 0)) % 60)} reviews)
-                            </span>
-                        </div>
+                        <Link to="#reviews" className="inline-flex mb-4 rounded-sm hover:opacity-80" aria-label="Read customer reviews">
+                            <ReviewSummary fabricId={fabric.id} />
+                        </Link>
                         <h1 className="font-display text-5xl sm:text-6xl leading-[0.95]">{fabric.name}</h1>
                         <p className="mt-6 font-display text-3xl text-accent">{formatINR(fabric.price)}<span className="text-base text-muted-foreground font-body"> {t('product.perMetre')}</span></p>
                         <p className="mt-6 text-foreground/70 text-lg leading-relaxed max-w-md">{fabric.description}</p>
@@ -135,6 +122,9 @@ export default function ProductDetail() {
                         </div>
                     </div>
                 </div>
+            </div>
+            <div className="mx-auto max-w-[1400px] px-6 lg:px-10 pb-16">
+                <Reviews fabricId={fabric.id} />
             </div>
 
         </div>

@@ -58,13 +58,14 @@ export default function Home() {
                 <div className="relative mx-auto max-w-[1400px] w-full px-6 lg:px-10 z-10">
                     <div className="max-w-xl lg:max-w-[50%] animate-slide-fade-in">
                         <div className="eyebrow mb-6 flex flex-col md:flex-row md:items-center gap-1 md:gap-0">
-                            <span>Premium Fabrics</span>
+                            <span>2-PIECE SETS</span>
                             <span className="hidden md:inline mx-2">·</span>
-                            <span>Original Cutpieces</span>
+                            <span>RAYMOND SHIRT FABRICS</span>
+
                         </div>
                         <h2 className="font-display text-[3.4rem] sm:text-[4.5rem] lg:text-[5.5rem] leading-[0.95] tracking-tight text-balance">
                             {t('hero.italic') === 'Elegance' ? (
-                                <>Branded Fabrics<br /> Delivered To Your Doorstep</>
+                                <>One Set. One Shirt.<br />Your Fit.</>
                             ) : (
                                 <>धागे से बुनें अपना <span className="italic">{t('hero.italic')}</span>।</>
                             )}
@@ -78,9 +79,9 @@ export default function Home() {
                         <div className="mt-6 flex flex-col md:flex-row md:items-center gap-1.5 md:gap-0 font-mono text-[10px] tracking-widest text-foreground/60 uppercase">
                             <span>✓ 100% Original Mill Stamped</span>
                             <span className="hidden md:inline mx-3">·</span>
-                            <span>✓ 15+ Years Trust</span>
+                            <span>✓ 10+ Years Trust</span>
                             <span className="hidden md:inline mx-3">·</span>
-                            <span>✓ Pan-India Delivery</span>
+                            <span>✓ Limited Clearance Stock</span>
                         </div>
                     </div>
                 </div>
