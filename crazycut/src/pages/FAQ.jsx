@@ -16,10 +16,10 @@ const CATEGORIES = [
     {
         title: 'Cut Pieces',
         items: [
-            { q: 'What is a cut piece?', a: 'A cut piece is unstitched fabric sold by the metre — bought folded, kept ready, and cut only when you or your tailor are ready to stitch. It is the Indian way of buying cloth: the same metre can become a shirt, a trouser, a kurta, or a memory.' },
-            { q: 'What sizes/lengths are available?', a: 'You order in whole metres using the quantity selector on the product page. Most shirting needs 2–2.5m; trousers 1.5–2m; a blazer 2.5–3m. Order a touch extra to account for shrinkage and pattern matching.' },
-            { q: 'Can I order multiple cut pieces?', a: 'Absolutely. Add as many fabrics as you like to your cart, each with its own length and tailoring intent, and check out together in a single order.' },
-            { q: 'Can I request a specific length?', a: 'You can set any whole-metre length per fabric via the quantity selector. For a continuous uncut piece above standard rolls, note it in the order notes at checkout and we will do our best to accommodate.' },
+            { q: 'What is a 2-piece set?', a: 'Each product is a fixed set of two Raymond shirt-fabric pieces: one piece for the front and back, and one piece for the sleeves and collar. Take both pieces to your tailor and have your shirt stitched your way.' },
+            { q: 'How many pieces do I receive?', a: 'Every product order contains one 2-piece Raymond shirt-fabric set. You can add multiple sets of the same fabric or choose different fabrics in your cart.' },
+            { q: 'Can I order multiple sets?', a: 'Absolutely. Use the cart controls to add as many 2-piece sets as you need, then check out together in a single order.' },
+            { q: 'Can I request a specific cut or length?', a: 'The sets are pre-cut and sold as shown. For tailoring questions or a special request, contact us on WhatsApp before ordering.' },
         ],
     },
     {
@@ -33,7 +33,7 @@ const CATEGORIES = [
     {
         title: 'Returns & Exchanges',
         items: [
-            { q: 'Can I return fabric?', a: 'Because cut pieces are sold unstitched by the metre and are cut to order, they cannot be returned for a change of mind. If something is genuinely wrong with your order, we will make it right — see below.' },
+            { q: 'Can I return fabric?', a: 'Because each 2-piece set is pre-cut and prepared to order, it cannot be returned for a change of mind. If something is genuinely wrong with your order, we will make it right — see below.' },
             { q: 'What happens if the fabric arrives damaged?', a: 'If your fabric arrives torn, soiled, or flawed, contact us within 48 hours of delivery with a photo and we will replace the cut piece or refund it in full — no argument.' },
             { q: 'What if the color or quality is different from what I expected?', a: 'We work hard to represent each weave honestly, but if the cloth you receive is materially different from its listing — wrong fabric type, wrong weight, or a damaged weave — reach out within 48 hours and we will resolve it with a replacement or refund.' },
         ],
@@ -42,8 +42,7 @@ const CATEGORIES = [
         title: 'Using the Fabric',
         items: [
             { q: 'What can I stitch from this fabric?', a: 'Almost anything. The "What Can Be Stitched?" gallery on each product page suggests the silhouettes best suited to that cloth — from linen shirts and formal trousers to structured blazers — and the Visualize It studio previews the drape on a shirt or trouser in real time.' },
-            { q: 'How much fabric do I need for a shirt?', a: 'A standard men\'s shirt needs roughly 2 to 2.5 metres of fabric, depending on collar style, sleeve length, and pattern repeat. Order 2.5m to be safe, especially for striped or patterned cloth that must be matched across panels.' },
-            { q: 'How much fabric do I need for trousers?', a: 'A pair of trousers typically needs 1.5 to 2 metres. Allow 2m for taller fits, pleated styles, or patterned fabric that requires matching at the seam.' },
+            { q: 'What does each piece cover?', a: 'Piece 1 covers the front and back of the shirt. Piece 2 covers the sleeves and collar. Your tailor uses both pieces to stitch the finished shirt.' },
             { q: 'Is this fabric suitable for formal tailoring?', a: 'Mid- and heavyweight wools and fine poplins hold the structure and press formal tailoring demands. Check the weight and weave on the product page — when a fabric is flagged Heavyweight or Worsted, it is built to hold a crease and a collar.' },
         ],
     },
@@ -59,7 +58,7 @@ export default function FAQ() {
                 <div className="absolute inset-0 weave-grain opacity-40" />
                 <div className="relative mx-auto max-w-[1400px] px-6 lg:px-10">
                     <Reveal>
-                        <p className="eyebrow mb-4">The Atelier · Help</p>
+                        <p className="eyebrow mb-4">Need Help?</p>
                         <div className="flex items-end justify-between gap-8">
                             <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl leading-[0.95] text-balance">Questions, answered.</h1>
                             <p className="hidden sm:block font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground text-right max-w-[14rem]">

@@ -18,7 +18,7 @@ export default function Footer() {
               Crazy CutPiece
             </h2>
             <p className="text-foreground/80 text-lg leading-relaxed mb-6 max-w-lg">
-              Serving Khargone with premium unstitched suit & shirt materials for over 15+ years. Now delivering nationwide!
+              Crazy Cut Piece is a real physical fabric shop in Khargone, Madhya Pradesh. Now we're making our best product original Raymond mill fabric - available to customers across India.
             </p>
 
             <div className="space-y-6">
@@ -73,19 +73,14 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12 pb-12 border-b border-border">
+        <div className="grid lg:grid-cols-2 gap-12 pb-12 border-b border-border text-center">
           <div>
             <h2 className="font-display text-5xl sm:text-6xl leading-[0.95] text-balance">{t('footer.headline')}</h2>
-            <p className="mt-5 text-muted-foreground max-w-md">{t('footer.newsletterDesc')}</p>
+            <p className="mt-5 text-muted-foreground max-w-md mx-auto">{t('footer.newsletterDesc')}</p>
           </div>
-          <div className="flex items-end">
-            <form className="w-full flex items-end gap-3" onSubmit={(e) => e.preventDefault()}>
-              <label className="flex-1 block">
-                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{t('footer.emailLabel')}</span>
-                <input type="email" placeholder={t('footer.emailPlaceholder')} className="mt-1 w-full bg-transparent border-b border-border py-2 focus:border-accent focus:outline-none font-display text-lg" />
-              </label>
-              <button className="btn-loom-solid"><ArrowRight className="w-4 h-4" /></button>
-            </form>
+          <div className="flex items-center justify-center gap-3 flex-wrap">
+            <Link to="/shop" className="btn-loom-solid">{t('footer.shopRaymond')} <ArrowRight className="w-4 h-4" /></Link>
+            <a href="https://wa.me/919425333460" target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 bg-[#128C7E] text-white font-mono text-xs uppercase tracking-[0.2em] px-7 py-3.5 transition-all duration-500 hover:-translate-y-1">{t('footer.orderWhatsapp')}</a>
           </div>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 py-12">
@@ -106,7 +101,7 @@ export default function Footer() {
             <p className="eyebrow mb-4">{t('footer.atelierTitle')}</p>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><a href="/#atelier" className="hover:text-foreground">{t('footer.studio')}</a></li>
-              <li><a href="/#visualize" className="hover:text-foreground">{t('footer.visualizeIt')}</a></li>
+              <li><a href="/#how-it-works" className="hover:text-foreground">{t('footer.visualizeIt')}</a></li>
               <li><Link to="/orders" className="hover:text-foreground">{t('footer.orders')}</Link></li>
             </ul>
           </div>

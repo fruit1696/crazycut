@@ -4,7 +4,6 @@ import { ShoppingBag, User, LogOut, Menu, X, ChevronDown } from 'lucide-react';
 import { useCart } from '@/lib/cartStore';
 import { useAuth } from '@/lib/AuthContext';
 import { useTranslation } from 'react-i18next';
-import { BRANDS } from '@/lib/brands';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -45,11 +44,6 @@ export default function Navbar() {
       ]
     },
     { 
-      label: t('nav.byBrand'), 
-      dropdown: true, 
-      options: BRANDS.map(b => ({ label: b, to: `/shop?brand=${b}` }))
-    },
-    { 
       label: t('nav.byPattern'), 
       dropdown: true, 
       options: [
@@ -72,7 +66,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-[72px]">
           <Link to="/" className="flex flex-col">
             <span className="font-display italic text-2xl tracking-tight leading-none">CrazyCutPiece</span>
-            <span className="font-mono text-[11px] sm:text-xs uppercase tracking-[0.1em] text-muted-foreground mt-1">क्रेजी कटपीस</span>
+  
           </Link>
           <nav className="hidden md:flex items-center">
             {menuItems.map((item, i) => (

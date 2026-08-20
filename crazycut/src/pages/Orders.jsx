@@ -29,7 +29,7 @@ export default function Orders() {
         <div className="pt-[112px]">
             <div className="mx-auto max-w-[1000px] px-6 lg:px-10 py-6 sm:py-8">
                 <p className="eyebrow mb-3">Your orders</p>
-                <h1 className="font-display text-4xl mb-6">From loom to door</h1>
+                <h1 className="font-display text-4xl mb-6">The Honest Route</h1>
                 {orders.length === 0 ? (
                     <div className="py-20 text-center border border-border">
                         <Package className="w-10 h-10 text-muted-foreground mx-auto mb-4" />
@@ -57,7 +57,7 @@ export default function Orders() {
                                         {(o.items || []).map((i, idx) => (
                                             <li key={idx} className="flex gap-4 py-3">
                                                 <div className="w-12 h-16 overflow-hidden bg-muted"><Image src={i.image_url} fittingType="fill" className="w-full h-full" /></div>
-                                                <div className="flex-1"><p className="font-display text-lg leading-tight">{i.fabric_name}</p><p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground mt-1">{i.quantity}m {i.garment_type ? `· ${i.garment_type}` : ''}</p></div>
+                                                <div className="flex-1"><p className="font-display text-lg leading-tight">{i.fabric_name}</p><p className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent mt-1">{i.quantity} {i.quantity === 1 ? '2-piece set' : '2-piece sets'}</p></div>
                                                 <span className="font-mono text-xs">{formatINR(i.price * i.quantity)}</span>
                                             </li>
                                         ))}

@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const CartContext = createContext(null);
-const STORAGE_KEY = 'ccp_cart_v1';
+const STORAGE_KEY = 'ccp_cart_v2';
 
 export function CartProvider({ children }) {
   const [items, setItems] = useState(() => {
@@ -16,8 +16,8 @@ export function CartProvider({ children }) {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); } catch {}
   }, [items]);
 
-  const addItem = (fabric, quantity = 1, garment_type = null) => {
-    const key = fabric.id + (garment_type ? `::${garment_type}` : '');
+  const addItem = (fabric, quantity = 1) => {
+    const key = fabric.id;
     setItems(prev => {
       const idx = prev.findIndex(i => i.key === key);
       if (idx >= 0) {
@@ -27,7 +27,7 @@ export function CartProvider({ children }) {
       }
       return [...prev, {
         key, fabric_id: fabric.id, fabric_name: fabric.name, brand: fabric.brand, price: fabric.price,
-        quantity, garment_type, image_url: fabric.image_url
+        quantity, image_url: fabric.image_url
       }];
     });
     setOpen(true);
