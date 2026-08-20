@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Upload, Loader2 } from 'lucide-react';
 import { supabase, fabricToFrontend, fabricToDb } from '@/api/supabaseClient';
@@ -6,11 +6,35 @@ import { Image } from '@/components/ui/image';
 import { BRANDS } from '@/lib/brands';
 
 const TYPES = ['Silk', 'Cotton', 'Linen', 'Wool', 'Blend'];
-const FAMILIES = ['Neutral', 'Indigo', 'Earth', 'Jewel'];
+const FAMILIES = ['Black', 'White', 'Grey', 'Brown', 'Beige', 'Blue', 'Green', 'Red', 'Pink', 'Yellow', 'Orange', 'Purple'];
 const PATTERNS = ['Solid', 'Striped', 'Floral', 'Geometric', 'Jacquard'];
 const WEIGHTS = ['Lightweight', 'Midweight', 'Heavyweight'];
 
-const empty = { name: '', description: '', price: 0, brand: '', fabric_type: 'Cotton', weave_type: '', color: '', color_family: 'Neutral', pattern: 'Solid', weight: 'Midweight', image_url: '', detail_image_url: '', material_composition: '', width_inches: 58, origin: '', stock_quantity: 0, featured: false, sku: '' };
+const empty = { name: '', description: '', price: 0, brand: '', fabric_type: 'Cotton', weave_type: '', color: '', color_family: 'Beige', pattern: 'Solid', weight: 'Midweight', image_url: '', detail_image_url: '', material_composition: '', width_inches: 58, origin: '', stock_quantity: 0, featured: false, sku: '' };
+
+const normalizeSku = (sku) => {
+    const normalized = String(sku || '').trim();
+    return normalized || null;
+};
+
+async function generateSku() {
+    const { data, error } = await supabase.from('fabrics').select('sku').not('sku', 'is', null);
+    if (error) throw new Error(error.message);
+
+    const usedSkus = new Set((data || []).map(row => normalizeSku(row.sku)).filter(Boolean));
+    const highestNumber = (data || []).reduce((highest, row) => {
+        const match = normalizeSku(row.sku)?.match(/^CCP-(\d+)$/i);
+        return match ? Math.max(highest, Number(match[1])) : highest;
+    }, 0);
+
+    let nextNumber = highestNumber + 1;
+    let candidate = `CCP-${String(nextNumber).padStart(4, '0')}`;
+    while (usedSkus.has(candidate)) {
+        nextNumber += 1;
+        candidate = `CCP-${String(nextNumber).padStart(4, '0')}`;
+    }
+    return candidate;
+}
 
 function Field({ label, options, value, onChange }) {
     return (
@@ -29,6 +53,7 @@ export default function AdminFabricEdit() {
     const [form, setForm] = useState(empty);
     const [saving, setSaving] = useState(false);
     const [uploading, setUploading] = useState(false);
+    const savingRef = useRef(false);
     const editing = Boolean(id);
 
     useEffect(() => {
@@ -64,18 +89,34 @@ export default function AdminFabricEdit() {
 
     const save = async (e) => {
         e.preventDefault();
+        if (savingRef.current) return;
+        savingRef.current = true;
         setSaving(true);
         try {
-            const payload = { ...form, price: Number(form.price), width_inches: Number(form.width_inches), stock_quantity: Number(form.stock_quantity), featured: Boolean(form.featured) };
+            const payload = { ...form, price: Number(form.price), width_inches: Number(form.width_inches), stock_quantity: Number(form.stock_quantity), featured: Boolean(form.featured), sku: normalizeSku(form.sku) };
             if (editing) {
                 const { error } = await supabase.from('fabrics').update(fabricToDb(payload)).eq('id', id);
                 if (error) throw new Error(error.message);
             } else {
-                const { error } = await supabase.from('fabrics').insert(fabricToDb(payload));
+                const requestedSku = payload.sku;
+                const sku = requestedSku || await generateSku();
+                const { data: existingFabric, error: existingSkuError } = requestedSku
+                    ? await supabase.from('fabrics').select('id').eq('sku', requestedSku).maybeSingle()
+                    : { data: null, error: null };
+                if (existingSkuError) throw new Error(existingSkuError.message);
+                if (existingFabric) throw new Error(`SKU ${requestedSku} already exists.`);
+
+                const insertPayload = fabricToDb({ ...payload, sku });
+                let { error } = await supabase.from('fabrics').insert(insertPayload);
+                if (error?.code === '23505' && !requestedSku) {
+                    const retrySku = await generateSku();
+                    ({ error } = await supabase.from('fabrics').insert(fabricToDb({ ...payload, sku: retrySku })));
+                }
                 if (error) throw new Error(error.message);
             }
             navigate('/admin');
         } catch (err) { console.error(err); alert('Save failed'); }
+        savingRef.current = false;
         setSaving(false);
     };
 
@@ -120,7 +161,7 @@ export default function AdminFabricEdit() {
                         </label>
                         <label className="flex items-center justify-center gap-2 border border-dashed border-border py-4 cursor-pointer hover:border-foreground">
                             {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                            <span className="font-mono text-[10px] uppercase tracking-[0.2em]">Upload macro detail</span>
+                            <span className="font-mono text-[10px] uppercase tracking-[0.2em]">Upload detail</span>
                             <input type="file" accept="image/*" className="hidden" onChange={e => upload(e, 'detail_image_url')} />
                         </label>
                         <button type="submit" disabled={saving || uploading} className="btn-loom-solid w-full mt-8 disabled:opacity-50">{saving ? 'Saving…' : editing ? 'Update cut piece' : 'Publish cut piece'}</button>

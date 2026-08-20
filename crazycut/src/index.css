@@ -211,6 +211,22 @@
     50% { transform: translateX(3px); }
   }
 
+  .animate-atelier-truck {
+    animation: atelierTruck 8s linear infinite;
+    will-change: left;
+  }
+  @keyframes atelierTruck {
+    from { left: -1.5rem; }
+    to { left: 100%; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-atelier-truck {
+      animation: none;
+      left: 0;
+    }
+  }
+
   .text-balance {
     text-wrap: balance;
   }

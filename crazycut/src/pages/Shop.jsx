@@ -6,9 +6,63 @@ import { SlidersHorizontal } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Slider } from '@/components/ui/slider';
 
+const COLOR_FAMILIES = [
+    { name: 'Black', value: '#111111' },
+    { name: 'White', value: '#ffffff' },
+    { name: 'Grey', value: '#8a8a8a' },
+    { name: 'Brown', value: '#795548' },
+    { name: 'Beige', value: '#d6c2a1' },
+    { name: 'Blue', value: '#2563eb' },
+    { name: 'Green', value: '#3f7d4a' },
+    { name: 'Red', value: '#c74646' },
+    { name: 'Pink', value: '#e58ca8' },
+    { name: 'Yellow', value: '#e2b93b' },
+    { name: 'Orange', value: '#d97732' },
+    { name: 'Purple', value: '#8056a8' },
+];
+
+const COLOR_FAMILY_ALIASES = {
+    black: 'Black',
+    white: 'White',
+    ivory: 'White',
+    'off-white': 'White',
+    grey: 'Grey',
+    gray: 'Grey',
+    charcoal: 'Grey',
+    silver: 'Grey',
+    brown: 'Brown',
+    earth: 'Brown',
+    beige: 'Beige',
+    neutral: 'Beige',
+    cream: 'Beige',
+    khaki: 'Beige',
+    tan: 'Beige',
+    blue: 'Blue',
+    indigo: 'Blue',
+    navy: 'Blue',
+    green: 'Green',
+    olive: 'Green',
+    red: 'Red',
+    maroon: 'Red',
+    burgundy: 'Red',
+    wine: 'Red',
+    pink: 'Pink',
+    yellow: 'Yellow',
+    mustard: 'Yellow',
+    orange: 'Orange',
+    purple: 'Purple',
+    violet: 'Purple',
+    jewel: 'Purple',
+};
+
+const normalizeColorFamily = (value) => {
+    const normalized = String(value || '').trim().toLowerCase();
+    return COLOR_FAMILY_ALIASES[normalized] || value;
+};
+
 const FILTERS = {
     fabric_type: ['Silk', 'Cotton', 'Linen', 'Wool', 'Blend'],
-    color_family: ['Neutral', 'Indigo', 'Earth', 'Jewel'],
+    color_family: COLOR_FAMILIES.map(({ name }) => name),
     pattern: ['Solid', 'Striped', 'Floral', 'Geometric', 'Jacquard'],
     weight: ['Lightweight', 'Midweight', 'Heavyweight'],
 };
@@ -127,11 +181,31 @@ export default function Shop() {
                         <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{key.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())}</p>
                         {filters[key].length > 0 && <button onClick={() => clearCategory(key)} className="text-[9px] uppercase tracking-wider text-accent hover:underline">Clear</button>}
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                        {opts.map(o => (
-                            <button key={o} onClick={() => toggleFilter(key, o)} className={`text-left font-mono text-xs uppercase tracking-[0.14em] px-3 py-1.5 border transition-colors ${filters[key].includes(o) ? 'border-foreground bg-foreground text-background' : 'border-border text-foreground/70 hover:border-foreground'}`}>{o}</button>
-                        ))}
-                    </div>
+                    {key === 'color_family' ? (
+                        <div className="flex flex-wrap gap-3">
+                            {COLOR_FAMILIES.map(({ name, value }) => {
+                                const selected = filters.color_family.some(value => normalizeColorFamily(value) === name);
+                                return (
+                                    <button
+                                        key={name}
+                                        type="button"
+                                        onClick={() => toggleFilter(key, name)}
+                                        aria-label={`Filter by ${name}`}
+                                        aria-pressed={selected}
+                                        title={name}
+                                        className={`h-8 w-8 rounded-full border transition-transform hover:scale-110 ${selected ? 'border-foreground ring-2 ring-accent ring-offset-2 ring-offset-background' : 'border-border'}`}
+                                        style={{ backgroundColor: value }}
+                                    />
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <div className="flex flex-wrap gap-2">
+                            {opts.map(o => (
+                                <button key={o} onClick={() => toggleFilter(key, o)} className={`text-left font-mono text-xs uppercase tracking-[0.14em] px-3 py-1.5 border transition-colors ${filters[key].includes(o) ? 'border-foreground bg-foreground text-background' : 'border-border text-foreground/70 hover:border-foreground'}`}>{o}</button>
+                            ))}
+                        </div>
+                    )}
                 </div>
             ))}
         </>
@@ -140,7 +214,7 @@ export default function Shop() {
     const filtered = useMemo(() => {
         let list = fabrics.filter(f =>
             (filters.fabric_type.length === 0 || filters.fabric_type.includes(f.fabric_type)) &&
-            (filters.color_family.length === 0 || filters.color_family.includes(f.color_family)) &&
+            (filters.color_family.length === 0 || filters.color_family.some(value => normalizeColorFamily(value) === normalizeColorFamily(f.color_family))) &&
             (filters.pattern.length === 0 || filters.pattern.includes(f.pattern)) &&
             (filters.weight.length === 0 || filters.weight.includes(f.weight)) &&
             (f.price >= filters.min_price && f.price <= filters.max_price));

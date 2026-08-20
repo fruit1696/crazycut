@@ -108,7 +108,6 @@ export default function Footer() {
             <p className="eyebrow mb-4">{t('footer.connectTitle')}</p>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><a href="mailto:hello@crazycutpiece.com" className="hover:text-foreground">hello@crazycutpiece.com</a></li>
-              <li><a href="tel:+919425333460" className="hover:text-foreground">+919425333460</a></li>
               <li><Link to="/faq" className="hover:text-foreground">FAQ</Link></li>
             </ul>
           </div>
