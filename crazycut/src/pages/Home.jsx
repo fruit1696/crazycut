@@ -19,11 +19,20 @@ export default function Home() {
         if (!video) return undefined;
 
         const playVideo = () => {
-            video.play().catch(() => {});
+            const playPromise = video.play();
+            if (playPromise) {
+                playPromise.catch((error) => {
+                    if (error.name !== 'AbortError') {
+                        console.debug('Background video autoplay was blocked:', error);
+                    }
+                });
+            }
         };
 
+        video.defaultMuted = true;
+        video.muted = true;
         playVideo();
-        video.addEventListener('canplay', playVideo);
+        video.addEventListener('canplay', playVideo, { once: true });
         return () => video.removeEventListener('canplay', playVideo);
     }, []);
 
@@ -66,7 +75,7 @@ export default function Home() {
 
     const howToOrderSteps = [
         { icon: MousePointerClick, label: '1', title: 'Choose', desc: 'Browse Raymond fabrics and open the one you like.' },
-        { icon: MessageCircle, label: '2', title: 'Order on WhatsApp', desc: 'Tap the WhatsApp button — your message is pre-filled.' },
+        { icon: MessageCircle, label: '2', title: 'Just Checkout', desc: 'Enter your delivery details. That’s all.' },
         { icon: IndianRupee, label: '3', title: 'Cash on Delivery', desc: 'Confirm product, quantity & address. Pay when it arrives.' },
         { icon: Truck, label: '4', title: 'Delivered', desc: 'Your 2-piece set ships from Khargone to your door.' },
     ];
@@ -75,9 +84,8 @@ export default function Home() {
         <div>
             <section id="landing-hero" className="relative overflow-hidden min-h-[90vh] flex items-center pt-[88px] lg:pt-[112px]">
                 <div className="absolute inset-0 overflow-hidden">
-                    <video ref={videoRef} autoPlay muted loop playsInline preload="auto" tabIndex="-1" disablePictureInPicture disableRemotePlayback className="hero-background-video pointer-events-none w-full h-full object-cover" aria-hidden="true">
+                    <video ref={videoRef} autoPlay muted loop playsInline {...{ 'webkit-playsinline': 'true' }} preload="auto" tabIndex="-1" disablePictureInPicture disableRemotePlayback className="hero-background-video pointer-events-none w-full h-full object-cover" aria-hidden="true">
                         <source src="/video2.mp4" type="video/mp4" />
-                        <source src="/video.mov" type="video/quicktime" />
                     </video>
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-r from-[rgba(253,251,247,0.95)] via-[rgba(253,251,247,0.7)] to-transparent pointer-events-none" />
@@ -224,7 +232,7 @@ export default function Home() {
                         Choose <span className="mx-2 max-md:mx-0.5">→</span> WhatsApp <span className="mx-2 max-md:mx-0.5">→</span> COD <span className="mx-2 max-md:mx-0.5">→</span> Delivered
                     </h2> */}
                     {/* <p className="mt-5 text-foreground/70 text-lg leading-relaxed text-balance">Simple, fast, and secure ordering in 4 easy steps.</p> */}
-                    <h2 className="font-display text-4xl sm:text-5xl leading-tight text-balance">Skip the checkout. Just WhatsApp us.</h2>
+                    <h2 className="font-display text-4xl sm:text-5xl leading-tight text-balance"></h2>
                     <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
                         {howToOrderSteps.map(({ icon: Icon, label, title, desc }) => (
                             <div key={label} className="border-t border-border pt-6 px-2">
@@ -269,31 +277,6 @@ export default function Home() {
                     </div>
                 </div>
             </section>
-
-            {/* <section id="visualize" className="py-12 lg:py-20">
-                <div className="mx-auto max-w-[1400px] px-6 lg:px-10 grid lg:grid-cols-2 gap-14 items-center">
-                    <div>
-                        <p className="eyebrow mb-6">{t('studio.eyebrow')}</p>
-                        <h2 className="font-display text-4xl sm:text-5xl leading-tight text-balance">{t('studio.headline')}</h2>
-                        <p className="mt-6 text-foreground/70 text-lg max-w-md leading-relaxed">{t('studio.desc')}</p>
-                        <ul className="mt-8 space-y-3">
-                            {studioSpecs.map(spec => (
-                                <li key={spec} className="flex items-center gap-3 font-mono text-xs uppercase tracking-[0.16em] text-foreground/80"><span className="w-6 h-px bg-accent" />{spec}</li>
-                            ))}
-                        </ul>
-                        <Link to="/shop" className="btn-loom-solid mt-10">{t('studio.cta')} <ArrowRight className="w-4 h-4" /></Link>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        {['/pants.jpeg', '/Linen.jpeg', '/gifts.jpeg', '/blazerr.jpeg'].map((img, i) => (
-                            <Link key={img} to="/shop" className={`group relative overflow-hidden bg-background border border-border aspect-[3/4] ${i % 2 === 1 ? 'mt-8' : ''}`}>
-                                <Image src={img} fittingType="fill" className="w-full h-full transition-transform duration-1000 group-hover:scale-105" />
-                            </Link>
-                        ))}
-                    </div>
-                </div>
-            </section> */}
-
-
         </div>
     );
 }

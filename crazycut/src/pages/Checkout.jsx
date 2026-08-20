@@ -1,19 +1,33 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Check, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Minus, Plus } from 'lucide-react';
 import { supabase } from '@/api/supabaseClient';
 import { useCart } from '@/lib/cartStore';
 import { Image } from '@/components/ui/image';
 import { formatINR } from '@/lib/format';
 
+const CHECKOUT_FORM_STORAGE_KEY = 'ccp_checkout_form_v1';
+const EMPTY_CHECKOUT_FORM = { shipping_name: '', shipping_phone: '', shipping_address: '', shipping_city: '', shipping_state: '', shipping_zip: '', shipping_country: 'India', notes: '' };
+
 export default function Checkout() {
-    const { items, subtotal, clear } = useCart();
+    const { items, subtotal, clear, updateQty } = useCart();
     const navigate = useNavigate();
-    const [form, setForm] = useState({ shipping_name: '', shipping_phone: '', shipping_address: '', shipping_city: '', shipping_state: '', shipping_zip: '', shipping_country: 'India', notes: '' });
+    const [form, setForm] = useState(() => {
+        try {
+            const savedForm = sessionStorage.getItem(CHECKOUT_FORM_STORAGE_KEY);
+            return savedForm ? { ...EMPTY_CHECKOUT_FORM, ...JSON.parse(savedForm) } : EMPTY_CHECKOUT_FORM;
+        } catch {
+            return EMPTY_CHECKOUT_FORM;
+        }
+    });
     const [placing, setPlacing] = useState(false);
     const [placed, setPlaced] = useState(null);
 
     const set = (k, v) => setForm(s => ({ ...s, [k]: v }));
+
+    useEffect(() => {
+        try { sessionStorage.setItem(CHECKOUT_FORM_STORAGE_KEY, JSON.stringify(form)); } catch {}
+    }, [form]);
 
     const placeOrder = async (e) => {
         e.preventDefault();
@@ -43,6 +57,7 @@ export default function Checkout() {
             }
 
             clear();
+            try { sessionStorage.removeItem(CHECKOUT_FORM_STORAGE_KEY); } catch {}
             setPlaced({ ...orderData, id: orderId });
         } catch (err) { console.error(err); alert('Could not place order. Please try again.'); }
         setPlacing(false);
@@ -77,6 +92,9 @@ export default function Checkout() {
     return (
         <div className="pt-[112px]">
             <div className="mx-auto max-w-[1200px] px-6 lg:px-10 py-6 sm:py-8">
+                <button type="button" onClick={() => navigate(-1)} className="mb-5 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:text-foreground">
+                    <ArrowLeft className="h-4 w-4" /> Back
+                </button>
                 <p className="eyebrow mb-3">Seamless Checkout</p>
                 <h1 className="font-display text-4xl mb-6">Confirm your cut pieces</h1>
                 <form onSubmit={placeOrder} className="grid lg:grid-cols-2 gap-10">
@@ -103,7 +121,16 @@ export default function Checkout() {
                                     <div className="w-16 h-20 overflow-hidden bg-muted"><Image src={i.image_url} fittingType="fill" className="w-full h-full" /></div>
                                     <div className="flex-1">
                                         <p className="font-display text-lg leading-tight">{i.fabric_name}</p>
-                                        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent mt-1">{i.quantity} {i.quantity === 1 ? '2-piece set' : '2-piece sets'}</p>
+                                        <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-accent">2-piece set</p>
+                                        <div className="mt-3 inline-flex items-center border border-border">
+                                            <button type="button" onClick={() => updateQty(i.key, i.quantity - 1)} className="p-1.5 transition-colors hover:bg-muted" aria-label={`Decrease quantity of ${i.fabric_name}`}>
+                                                <Minus className="h-3.5 w-3.5" />
+                                            </button>
+                                            <span className="min-w-9 px-2 text-center font-mono text-sm" aria-live="polite">{i.quantity}</span>
+                                            <button type="button" onClick={() => updateQty(i.key, i.quantity + 1)} className="p-1.5 transition-colors hover:bg-muted" aria-label={`Increase quantity of ${i.fabric_name}`}>
+                                                <Plus className="h-3.5 w-3.5" />
+                                            </button>
+                                        </div>
                                     </div>
                                     <span className="font-mono text-sm">{formatINR(i.price * i.quantity)}</span>
                                 </li>

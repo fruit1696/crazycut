@@ -41,7 +41,7 @@ const CATEGORIES = [
     {
         title: 'Using the Fabric',
         items: [
-            { q: 'What can I stitch from this fabric?', a: 'Almost anything. The "What Can Be Stitched?" gallery on each product page suggests the silhouettes best suited to that cloth — from linen shirts and formal trousers to structured blazers — and the Visualize It studio previews the drape on a shirt or trouser in real time.' },
+            { q: 'What can I stitch from this fabric?', a: 'Almost anything. The "What Can Be Stitched?" gallery on each product page suggests the silhouettes best suited to that cloth — from linen shirts and formal trousers to structured blazers' },
             { q: 'What does each piece cover?', a: 'Piece 1 covers the front and back of the shirt. Piece 2 covers the sleeves and collar. Your tailor uses both pieces to stitch the finished shirt.' },
             { q: 'Is this fabric suitable for formal tailoring?', a: 'Mid- and heavyweight wools and fine poplins hold the structure and press formal tailoring demands. Check the weight and weave on the product page — when a fabric is flagged Heavyweight or Worsted, it is built to hold a crease and a collar.' },
         ],
@@ -127,10 +127,9 @@ export default function FAQ() {
                     <Reveal>
                         <p className="eyebrow mb-4">Still curious?</p>
                         <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl text-balance">We will talk you through it.</h2>
-                        <p className="mt-4 text-foreground/70 text-lg max-w-xl mx-auto">Browse the gallery, visualize a cut piece, or message us on WhatsApp — we reply fast.</p>
+                        <p className="mt-4 text-foreground/70 text-lg max-w-xl mx-auto">Browse the gallery, pick a cut piece, or message us on WhatsApp — we reply fast.</p>
                         <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
                             <Link to="/shop" className="btn-loom-solid">Shop cut pieces <ArrowRight className="w-4 h-4" /></Link>
-                            <Link to="/#visualize" className="btn-loom-ghost">Visualize a fabric</Link>
                         </div>
                     </Reveal>
                 </div>
