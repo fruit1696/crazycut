@@ -42,10 +42,8 @@ export default function ProductDetail() {
 
     const specs = [
         [t('product.specMaterial'), fabric.material_composition],
-        [t('product.specWeave'), fabric.weave_type],
-        [t('product.specWidth'), fabric.width_inches ? `${fabric.width_inches}″` : '—'],
+        [t('product.specColor'), fabric.color],
         [t('product.specWeight'), fabric.weight],
-        [t('product.specOrigin'), fabric.origin],
         [t('product.specPattern'), fabric.pattern],
     ];
 

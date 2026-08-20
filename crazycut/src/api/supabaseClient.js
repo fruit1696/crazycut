@@ -18,5 +18,6 @@ export const fabricToDb = (payload) => {
   const { price, ...rest } = payload;
   const mapped = { ...rest };
   if (price !== undefined) mapped.price_per_metre = price;
+  if (typeof mapped.sku === 'string' && mapped.sku.trim() === '') mapped.sku = null;
   return mapped;
 };

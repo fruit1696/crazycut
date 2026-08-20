@@ -48,6 +48,8 @@ export default function Home() {
     }, []);
 
     const featured = fabrics.filter(f => f.featured).slice(0, 8);
+    const heroSubtitle = t('hero.subtitle');
+    const heroPrice = 'Starting at ₹400.';
 
     const pillars = [
         { icon: BadgeCheck, title: t('atelier.pillar1Title'), desc: t('atelier.pillar1Desc') },
@@ -57,7 +59,7 @@ export default function Home() {
 
     const howItWorksSteps = [
         { icon: Package, label: 'STEP 1', title: '2 Pieces of Raymond Fabric', desc: 'What you receive' },
-        { icon: Scissors, label: 'STEP 2', title: 'Take It to Your Tailor', desc: 'Your trusted master cutter' },
+        { icon: Scissors, label: 'STEP 2', title: 'Take It to Your Tailor', desc: 'Give the fabric to your trusted master cutter.' },
         { icon: Shirt, label: 'STEP 3', title: 'Get Your Shirt Stitched', desc: 'Cut & sewn to order' },
         { icon: CheckCircle, label: 'STEP 4', title: 'Your Shirt. Your Fit.', desc: 'Wear it your way' },
     ];
@@ -74,7 +76,7 @@ export default function Home() {
             <section id="landing-hero" className="relative overflow-hidden min-h-[90vh] flex items-center pt-[88px] lg:pt-[112px]">
                 <div className="absolute inset-0 overflow-hidden">
                     <video ref={videoRef} autoPlay muted loop playsInline preload="auto" tabIndex="-1" disablePictureInPicture disableRemotePlayback className="hero-background-video pointer-events-none w-full h-full object-cover" aria-hidden="true">
-                        <source src="/video.mp4" type="video/mp4" />
+                        <source src="/video2.mp4" type="video/mp4" />
                         <source src="/video.mov" type="video/quicktime" />
                     </video>
                 </div>
@@ -97,7 +99,9 @@ export default function Home() {
                             )}
                         </h2>
                         <p className="mt-7 text-foreground/80 text-lg leading-relaxed">
-                            {t('hero.subtitle')}
+                            {heroSubtitle.includes(heroPrice) ? (
+                                <>{heroSubtitle.replace(heroPrice, '')}<span className="font-bold text-accent">{heroPrice}</span></>
+                            ) : heroSubtitle}
                         </p>
                         <div className="mt-10 flex flex-col items-start gap-3">
                             <Link to="/shop" className="btn-loom-solid">{t('hero.ctaGallery')} <ArrowRight className="w-4 h-4" /></Link>
@@ -144,10 +148,47 @@ export default function Home() {
                 </div>
             </section>
 
+            <section id="why-buy-it" className="bg-foreground py-14 text-background lg:py-24">
+                <div className="mx-auto max-w-[1100px] px-6 text-center lg:px-10">
+                    <p className="eyebrow mb-4">WHY BUY IT?</p>
+                    <h2 className="font-display text-4xl leading-tight text-balance sm:text-5xl lg:text-6xl">
+                        Raymond Quality. Just <span className="text-accent">₹400.</span>
+                    </h2>
+                    <p className="mx-auto mt-7 max-w-2xl text-lg leading-relaxed text-background/75">
+                        Why buy an entire thaan when you only need enough fabric for one shirt?
+                    </p>
+                    <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-background/75">
+                        Get <strong className="font-semibold text-background">1.8 metres of genuine Raymond fabric</strong> pre-cut into 2 pieces and ready to take to your tailor.
+                    </p>
+                    <p className="mt-7 font-display text-2xl sm:text-3xl">
+                        Trusted brand. Affordable price.
+                    </p>
+
+                    <div className="mt-12 grid border-y border-background/20 sm:grid-cols-3">
+                        <div className="px-5 py-7 sm:border-r sm:border-background/20">
+                            <p className="font-display text-xl">1.8 metres</p>
+                            <p className="mt-1 text-sm text-background/60">Enough for 1 shirt</p>
+                        </div>
+                        <div className="border-t border-background/20 px-5 py-7 sm:border-r sm:border-t-0">
+                            <p className="font-display text-xl">Raymond fabric</p>
+                            <p className="mt-1 text-sm text-background/60">Genuine quality</p>
+                        </div>
+                        <div className="border-t border-background/20 px-5 py-7 sm:border-t-0">
+                            <p className="font-display text-xl">Only ₹400 per set</p>
+                            <p className="mt-1 text-sm text-background/60">Choose your own tailor &amp; style</p>
+                        </div>
+                    </div>
+
+                    <p className="mx-auto mt-10 max-w-3xl font-display text-2xl leading-snug text-balance sm:text-3xl">
+                        The brand you trust. The quality you expect. The price you’ll love.
+                    </p>
+                </div>
+            </section>
+
             <section id="how-it-works" className="py-12 lg:py-20">
                 <div className="mx-auto max-w-[1100px] px-6 lg:px-10 text-center">
                     <p className="eyebrow mb-4">HOW IT WORKS</p>
-                    <h2 className="font-display text-4xl sm:text-5xl leading-tight text-balance">So, What Exactly Is a 2-Piece Set?</h2>
+                    <h2 className="font-display text-4xl sm:text-5xl leading-tight text-balance">From Fabric to Your Shirt</h2>
                     <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
                         {howItWorksSteps.map(({ icon: Icon, label, title, desc }) => (
                             <div key={label} className="border-t border-border pt-6 px-2">
@@ -218,7 +259,9 @@ export default function Home() {
                     <div className="mt-16 grid sm:grid-cols-3 gap-10 text-left">
                         {pillars.map(f => (
                             <div key={f.title} className="border-t border-border pt-6">
-                                <f.icon className="w-6 h-6 text-accent mb-4" />
+                                <div className="relative mb-4 h-6 overflow-hidden">
+                                    <f.icon className={`h-6 w-6 text-accent ${f.icon === Truck ? 'absolute animate-atelier-truck' : ''}`} />
+                                </div>
                                 <h3 className="font-display text-2xl mb-2">{f.title}</h3>
                                 <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
                             </div>
