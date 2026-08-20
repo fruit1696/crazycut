@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, MapPin } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
+const STORE_MAP_URL = 'https://www.google.com/maps/search/?api=1&query=Radha%20Vallabh%20Market%2C%20near%20Fawara%20Chowk%2C%20Khargone%2C%20Madhya%20Pradesh%20451001';
+
 export default function Footer() {
   const { t } = useTranslation();
   return (
@@ -10,7 +12,7 @@ export default function Footer() {
         {/* Physical Store Section */}
         <div className="grid lg:grid-cols-2 gap-10 pb-12 border-b border-border mb-12 items-center">
           <div>
-            <a href="https://maps.google.com/?q=Crazy+Cutpiece+Khargone" target="_blank" rel="noreferrer" className="eyebrow flex items-center gap-2 mb-3 text-accent hover:text-foreground transition-colors">
+            <a href={STORE_MAP_URL} target="_blank" rel="noreferrer" className="eyebrow flex items-center gap-2 mb-3 text-accent hover:text-foreground transition-colors">
               <MapPin className="w-4 h-4" />
               Visit Our Physical Store in Khargone
             </a>
@@ -29,9 +31,9 @@ export default function Footer() {
                 <div>
                   <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-muted-foreground mb-1">Store Address</p>
                   <p className="text-sm text-foreground/90 leading-relaxed mb-2">
-                    Main Market, Khargone, Madhya Pradesh 451001
+                    Radha Vallabh Market, near Fawara Chowk, Khargone, Madhya Pradesh 451001
                   </p>
-                  <a href="https://maps.google.com/?q=Crazy+Cutpiece+Khargone" target="_blank" rel="noreferrer" className="text-sm font-medium hover:text-accent transition-colors inline-flex items-center gap-1">
+                  <a href={STORE_MAP_URL} target="_blank" rel="noreferrer" className="text-sm font-medium hover:text-accent transition-colors inline-flex items-center gap-1">
                     Get Directions on Google Maps <ArrowRight className="w-3 h-3" />
                   </a>
                 </div>
