@@ -1,36 +1,11 @@
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useState } from 'react';
 import { X } from 'lucide-react';
 
 const PHONE = '919425333460';
 
 export default function WhatsAppWidget() {
   const [open, setOpen] = useState(false);
-  const location = useLocation();
-  const [visible, setVisible] = useState(() => location.pathname !== '/');
   const msg = encodeURIComponent("Hi! I have a question about the cut-piece fabrics at CrazyCutPiece.");
-
-  useEffect(() => {
-    if (location.pathname !== '/') {
-      setVisible(true);
-      return undefined;
-    }
-
-    const updateVisibility = () => {
-      const hero = document.getElementById('landing-hero');
-      setVisible(Boolean(hero && hero.getBoundingClientRect().bottom <= 0));
-    };
-
-    updateVisibility();
-    window.addEventListener('scroll', updateVisibility, { passive: true });
-    window.addEventListener('resize', updateVisibility);
-    return () => {
-      window.removeEventListener('scroll', updateVisibility);
-      window.removeEventListener('resize', updateVisibility);
-    };
-  }, [location.pathname]);
-
-  if (!visible) return null;
 
   return (
     <div className="fixed bottom-5 right-5 z-40 flex flex-col items-end">

@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, BadgeCheck, CheckCircle, CircleDollarSign, MessageCircle, MousePointerClick, Package, Scissors, Shirt, Truck } from 'lucide-react';
+import { ArrowRight, BadgeCheck, CheckCircle, IndianRupee, MessageCircle, MousePointerClick, Package, Scissors, Shirt, Truck } from 'lucide-react';
 import { supabase, fabricToFrontend } from '@/api/supabaseClient';
 import FabricCard from '@/components/FabricCard';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +11,21 @@ export default function Home() {
     const [fabrics, setFabrics] = useState([]);
     const [loading, setLoading] = useState(true);
     const [parallax, setParallax] = useState({ x: 0, y: 0 });
+    const videoRef = useRef(null);
     const { t } = useTranslation();
+
+    useEffect(() => {
+        const video = videoRef.current;
+        if (!video) return undefined;
+
+        const playVideo = () => {
+            video.play().catch(() => {});
+        };
+
+        playVideo();
+        video.addEventListener('canplay', playVideo);
+        return () => video.removeEventListener('canplay', playVideo);
+    }, []);
 
     useEffect(() => {
         (async () => {
@@ -51,7 +65,7 @@ export default function Home() {
     const howToOrderSteps = [
         { icon: MousePointerClick, label: '1', title: 'Choose', desc: 'Browse Raymond fabrics and open the one you like.' },
         { icon: MessageCircle, label: '2', title: 'Order on WhatsApp', desc: 'Tap the WhatsApp button — your message is pre-filled.' },
-        { icon: CircleDollarSign, label: '3', title: 'Cash on Delivery', desc: 'Confirm product, quantity & address. Pay when it arrives.' },
+        { icon: IndianRupee, label: '3', title: 'Cash on Delivery', desc: 'Confirm product, quantity & address. Pay when it arrives.' },
         { icon: Truck, label: '4', title: 'Delivered', desc: 'Your 2-piece set ships from Khargone to your door.' },
     ];
 
@@ -59,7 +73,7 @@ export default function Home() {
         <div>
             <section id="landing-hero" className="relative overflow-hidden min-h-[90vh] flex items-center pt-[88px] lg:pt-[112px]">
                 <div className="absolute inset-0 overflow-hidden">
-                    <video autoPlay muted loop playsInline className="w-full h-full object-cover" aria-hidden="true">
+                    <video ref={videoRef} autoPlay muted loop playsInline preload="auto" tabIndex="-1" disablePictureInPicture disableRemotePlayback className="hero-background-video pointer-events-none w-full h-full object-cover" aria-hidden="true">
                         <source src="/video.mp4" type="video/mp4" />
                         <source src="/video.mov" type="video/quicktime" />
                     </video>
@@ -87,7 +101,6 @@ export default function Home() {
                         </p>
                         <div className="mt-10 flex flex-col items-start gap-3">
                             <Link to="/shop" className="btn-loom-solid">{t('hero.ctaGallery')} <ArrowRight className="w-4 h-4" /></Link>
-                            <a href="https://wa.me/919425333460" target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 bg-[#128C7E] text-white font-mono text-xs uppercase tracking-[0.2em] px-7 py-3.5 transition-all duration-500 hover:-translate-y-1">Order on WhatsApp</a>
                         </div>
                         <div className="eyebrow mt-6 flex flex-col md:flex-row md:items-center gap-1.5 md:gap-0">
                             <span>✓ 100% Original Mill Stamped</span>
@@ -175,7 +188,7 @@ export default function Home() {
                         {howToOrderSteps.map(({ icon: Icon, label, title, desc }) => (
                             <div key={label} className="border-t border-border pt-6 px-2">
                                 <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-foreground text-background">
-                                    <Icon className="h-6 w-6" strokeWidth={1.5} />
+                                    <Icon className={`h-6 w-6 ${label === '4' ? 'animate-delivery-drive' : ''}`} strokeWidth={1.5} />
                                 </div>
                                 <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-accent">{label}</p>
                                 <h3 className="mt-3 font-display text-2xl leading-tight">{title}</h3>
