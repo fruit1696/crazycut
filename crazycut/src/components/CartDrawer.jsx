@@ -25,9 +25,9 @@ export default function CartDrawer() {
           {items.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center gap-4 py-20">
               <ShoppingBag className="w-10 h-10 text-muted-foreground" />
-              <p className="font-display text-2xl">Your loom is empty</p>
+              <p className="font-display text-2xl">Your Cart is Empty</p>
               <p className="text-sm text-muted-foreground max-w-[24ch]">Select a cut piece and visualize it stitched before it joins your cart.</p>
-              <button onClick={() => { setOpen(false); navigate('/shop'); }} className="btn-loom-ghost mt-2">Browse the gallery</button>
+              <button onClick={() => { setOpen(false); navigate('/shop'); }} className="btn-loom-ghost mt-2">Browse the Collection</button>
             </div>
           ) : (
             <ul className="space-y-5">

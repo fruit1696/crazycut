@@ -100,7 +100,7 @@ export default function Home() {
                         </h2>
                         <p className="mt-7 text-foreground/80 text-lg leading-relaxed">
                             {heroSubtitle.includes(heroPrice) ? (
-                                <>{heroSubtitle.replace(heroPrice, '')}<span className="font-bold text-accent">{heroPrice}</span></>
+                                <>{heroSubtitle.replace(heroPrice, '')}<span className="block whitespace-nowrap font-bold text-accent">{heroPrice}</span></>
                             ) : heroSubtitle}
                         </p>
                         <div className="mt-10 flex flex-col items-start gap-3">
