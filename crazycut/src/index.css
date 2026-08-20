@@ -203,6 +203,14 @@
     50% { opacity: 0.9; }
   }
 
+  .animate-delivery-drive {
+    animation: deliveryDrive 1.8s ease-in-out infinite;
+  }
+  @keyframes deliveryDrive {
+    0%, 100% { transform: translateX(-2px); }
+    50% { transform: translateX(3px); }
+  }
+
   .text-balance {
     text-wrap: balance;
   }
@@ -211,3 +219,11 @@
 /* Hide scrollbar for filter strips */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+.hero-background-video::-webkit-media-controls,
+.hero-background-video::-webkit-media-controls-enclosure,
+.hero-background-video::-webkit-media-controls-panel,
+.hero-background-video::-webkit-media-controls-play-button {
+  display: none !important;
+  -webkit-appearance: none;
+}

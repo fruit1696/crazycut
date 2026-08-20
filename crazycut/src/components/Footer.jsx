@@ -10,10 +10,10 @@ export default function Footer() {
         {/* Physical Store Section */}
         <div className="grid lg:grid-cols-2 gap-10 pb-12 border-b border-border mb-12 items-center">
           <div>
-            <p className="eyebrow flex items-center gap-2 mb-3 text-accent">
+            <a href="https://maps.google.com/?q=Crazy+Cutpiece+Khargone" target="_blank" rel="noreferrer" className="eyebrow flex items-center gap-2 mb-3 text-accent hover:text-foreground transition-colors">
               <MapPin className="w-4 h-4" />
               Visit Our Physical Store in Khargone
-            </p>
+            </a>
             <h2 className="font-display text-4xl sm:text-5xl leading-tight mb-4">
               Crazy CutPiece
             </h2>
@@ -80,7 +80,6 @@ export default function Footer() {
           </div>
           <div className="flex items-center justify-center gap-3 flex-wrap">
             <Link to="/shop" className="btn-loom-solid">{t('footer.shopRaymond')} <ArrowRight className="w-4 h-4" /></Link>
-            <a href="https://wa.me/919425333460" target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 bg-[#128C7E] text-white font-mono text-xs uppercase tracking-[0.2em] px-7 py-3.5 transition-all duration-500 hover:-translate-y-1">{t('footer.orderWhatsapp')}</a>
           </div>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 py-12">
@@ -100,7 +99,7 @@ export default function Footer() {
           <div>
             <p className="eyebrow mb-4">{t('footer.atelierTitle')}</p>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="/#atelier" className="hover:text-foreground">{t('footer.studio')}</a></li>
+              <li><Link to="/shop" className="hover:text-foreground">{t('footer.studio')}</Link></li>
               <li><a href="/#how-it-works" className="hover:text-foreground">{t('footer.visualizeIt')}</a></li>
               <li><Link to="/orders" className="hover:text-foreground">{t('footer.orders')}</Link></li>
             </ul>

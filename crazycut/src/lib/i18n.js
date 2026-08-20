@@ -24,7 +24,7 @@ const resources = {
       },
      atelier: {
         eyebrow: 'WHY CRAZY CUT PIECE',
-        manifesto: 'Good Fabric. Crazy Prices.',
+        manifesto: 'Premium Fabric. Crazy Deals.',
         pillar1Title: 'MILL STAMPTED AUTHENTICITY',
         pillar1Desc: 'Orignal Raymond mill fabric, available in limited stock.',
         pillar2Title: 'PIECE SETS',
