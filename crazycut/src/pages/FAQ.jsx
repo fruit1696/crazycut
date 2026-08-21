@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, HelpCircle } from 'lucide-react';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 import Reveal from '@/components/Reveal';
+import { RaymondText } from '@/components/RaymondWordmark';
 
 const CATEGORIES = [
     {
@@ -108,7 +109,7 @@ export default function FAQ() {
                                                         <span className="font-display text-lg sm:text-xl text-foreground group-hover:text-accent transition-colors text-left pr-4">{it.q}</span>
                                                     </AccordionTrigger>
                                                     <AccordionContent className="text-foreground/70 text-base leading-relaxed max-w-2xl">
-                                                        {it.a}
+                                                        <RaymondText>{it.a}</RaymondText>
                                                     </AccordionContent>
                                                 </AccordionItem>
                                             ))}

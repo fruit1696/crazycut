@@ -6,6 +6,7 @@ import { Image } from '@/components/ui/image';
 import { formatINR } from '@/lib/format';
 import { useCart } from '@/lib/cartStore';
 import Reviews, { ReviewSummary } from '@/components/Reviews';
+import RaymondWordmark, { RaymondText } from '@/components/RaymondWordmark';
 
 import { useTranslation } from 'react-i18next';
 
@@ -63,14 +64,17 @@ export default function ProductDetail() {
                         </div>
                     </div>
                     <div className="lg:py-4">
-                        <p className="eyebrow mb-4">{fabric.brand} · {fabric.sku}</p>
+                        <p className="eyebrow mb-4 flex items-center gap-2">
+                            {fabric.brand?.toLowerCase() === 'raymond' ? <RaymondWordmark className="h-[1.35em]" /> : fabric.brand}
+                            <span>· {fabric.sku}</span>
+                        </p>
                         <Link to="#reviews" className="inline-flex mb-4 rounded-sm hover:opacity-80" aria-label="Read customer reviews">
                             <ReviewSummary fabricId={fabric.id} />
                         </Link>
                         <h1 className="font-display text-5xl sm:text-6xl leading-[0.95]">{fabric.name}</h1>
                         <p className="mt-6 font-display text-3xl text-accent">{formatINR(fabric.price)}<span className="text-base text-muted-foreground font-body"> / 2-piece set</span></p>
                         <p className="mt-6 text-foreground/70 text-lg leading-relaxed max-w-md">{fabric.description}</p>
-                        <p className="mt-5 border-y border-border py-4 text-foreground/75 leading-relaxed max-w-md">You receive 2 pieces of Raymond shirt fabric. Take them to your tailor and get your shirt stitched your way.</p>
+                        <p className="mt-5 border-y border-border py-4 text-foreground/75 leading-relaxed max-w-md"><RaymondText>You receive 2 pieces of Raymond shirt fabric. Take them to your tailor and get your shirt stitched your way.</RaymondText></p>
 
                         <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
                             <span className="text-accent">{t('product.freeShipping')}</span>

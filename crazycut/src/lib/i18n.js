@@ -18,7 +18,7 @@ const resources = {
       hero: {
         eyebrow: 'Premium Fabrics · Original Cutpieces',
         italic: 'Elegance',
-        subtitle: '100% original Raymond fabric, sold in 2-piece shirt sets. You choose the cloth. Your tailor does the rest. Starting at ₹400.',
+        subtitle: '100% original fabric, sold in 2-piece shirt sets. You choose the cloth. Your tailor does the rest. Starting at ₹400.',
         ctaGallery: 'Shop All Fabrics',
         ctaStitched: 'Preview Your Look',
       },
@@ -42,7 +42,7 @@ const resources = {
         cta: 'EXPLORE COLLECTION',
       },
       gallery: {
-        eyebrow: "RAYMOND SHIRT SETS",
+        eyebrow: "SHIRT SETS",
         headline: 'Featured cut pieces',
         viewAll: 'View all',
       },
@@ -86,7 +86,7 @@ const resources = {
       footer: {
         headline: 'Find Your Raymond Fabric',
         newsletterDesc: 'Original Raymond mill fabric. 2-piece shirt sets. Starting at ₹400. Order on WhatsApp, pay Cash on Delivery.',
-        shopRaymond: 'SHOP RAYMOND FABRICS',
+        shopRaymond: 'SHOP FABRICS',
         orderWhatsapp: 'ORDER ON WHATSAPP',
         emailLabel: 'Email',
         emailPlaceholder: 'you@atelier.com',

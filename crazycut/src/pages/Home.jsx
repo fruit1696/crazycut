@@ -1,8 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, BadgeCheck, CheckCircle, IndianRupee, MessageCircle, MousePointerClick, Package, Scissors, Shirt, Truck } from 'lucide-react';
+import { ArrowRight, BadgeCheck, CheckCircle, ChevronDown, IndianRupee, MessageCircle, MousePointerClick, Package, Scissors, ShieldCheck, Shirt, Truck } from 'lucide-react';
 import { supabase, fabricToFrontend } from '@/api/supabaseClient';
 import FabricCard from '@/components/FabricCard';
+import RaymondWordmark, { RaymondText } from '@/components/RaymondWordmark';
+import MillStampIcon from '@/components/MillStampIcon';
 import { useTranslation } from 'react-i18next';
 import raymondImage from '../../raymond.jpeg';
 import pileImage from '../../pile.jpeg';
@@ -11,30 +13,7 @@ export default function Home() {
     const [fabrics, setFabrics] = useState([]);
     const [loading, setLoading] = useState(true);
     const [parallax, setParallax] = useState({ x: 0, y: 0 });
-    const videoRef = useRef(null);
     const { t } = useTranslation();
-
-    useEffect(() => {
-        const video = videoRef.current;
-        if (!video) return undefined;
-
-        const playVideo = () => {
-            const playPromise = video.play();
-            if (playPromise) {
-                playPromise.catch((error) => {
-                    if (error.name !== 'AbortError') {
-                        console.debug('Background video autoplay was blocked:', error);
-                    }
-                });
-            }
-        };
-
-        video.defaultMuted = true;
-        video.muted = true;
-        playVideo();
-        video.addEventListener('canplay', playVideo, { once: true });
-        return () => video.removeEventListener('canplay', playVideo);
-    }, []);
 
     useEffect(() => {
         (async () => {
@@ -82,59 +61,65 @@ export default function Home() {
 
     return (
         <div>
-            <section id="landing-hero" className="relative overflow-hidden min-h-[90vh] flex items-center pt-[88px] lg:pt-[112px]">
+            <section id="landing-hero" className="relative flex min-h-[100svh] items-start overflow-hidden pt-[176px] sm:pt-[330px] lg:min-h-[90vh] lg:items-center lg:pt-[112px]">
                 <div className="absolute inset-0 overflow-hidden">
-                    <video ref={videoRef} autoPlay muted loop playsInline {...{ 'webkit-playsinline': 'true' }} preload="auto" tabIndex="-1" disablePictureInPicture disableRemotePlayback className="hero-background-video pointer-events-none w-full h-full object-cover" aria-hidden="true">
-                        <source src="/video2.mp4" type="video/mp4" />
-                    </video>
+                    <img src="/chatgptback.jpeg" alt="" className="pointer-events-none h-full w-full scale-[1.08] object-cover object-[62%_50%] lg:origin-top-left lg:scale-[1.18] lg:object-[58%_52%]" aria-hidden="true" />
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-r from-[rgba(253,251,247,0.95)] via-[rgba(253,251,247,0.7)] to-transparent pointer-events-none" />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[rgba(253,251,247,0.96)] via-[rgba(253,251,247,0.64)] to-[rgba(253,251,247,0.06)]" />
                 <div className="absolute inset-0 weave-grain opacity-30 pointer-events-none" />
 
-                <div className="relative mx-auto max-w-[1400px] w-full px-6 lg:px-10 z-10">
-                    <div className="max-w-xl lg:max-w-[50%] animate-slide-fade-in">
-                        <div className="eyebrow mb-6 flex flex-col md:flex-row md:items-center gap-1 md:gap-0">
+                <div className="relative z-10 mx-auto w-full max-w-[1400px] px-[30px] lg:px-10">
+                    <div className="max-w-[22rem] animate-slide-fade-in sm:max-w-xl lg:max-w-[50%]">
+                        <div className="eyebrow mb-6 flex flex-col gap-1 font-semibold leading-relaxed !text-[#86141a] lg:mb-4 lg:flex-row lg:items-center lg:gap-0">
                             <span>2-PIECE SETS</span>
-                            <span className="hidden md:inline mx-2">·</span>
+                            <span className="mx-2 hidden lg:inline">·</span>
                             <span>RAYMOND SHIRT FABRICS</span>
-
+                            <span className="mt-3 h-0.5 w-12 bg-[#86141a] lg:hidden" aria-hidden="true" />
                         </div>
                         <h2 className="font-display text-[3.4rem] sm:text-[4.5rem] lg:text-[5.5rem] leading-[0.95] tracking-tight text-balance">
                             {t('hero.italic') === 'Elegance' ? (
-                                <>Branded Fabric. Crazy Prices.</>
+                                <>
+                                    <span className="flex items-center whitespace-nowrap">
+                                        <RaymondWordmark className="mr-[0.12em] h-[0.72em]" />
+                                        <span>Fabrics.</span>
+                                    </span>
+                                    <span className="block">Crazy Deals.</span>
+                                </>
                             ) : (
                                 <>धागे से बुनें अपना <span className="italic">{t('hero.italic')}</span>।</>
                             )}
                         </h2>
-                        <p className="mt-7 text-foreground/80 text-lg leading-relaxed">
+                        <p className="mt-7 max-w-[23rem] text-base leading-[1.65] text-foreground/85 sm:text-lg lg:mt-5">
                             {heroSubtitle.includes(heroPrice) ? (
-                                <>{heroSubtitle.replace(heroPrice, '')}<span className="block whitespace-nowrap font-bold text-accent">{heroPrice}</span></>
+                                <>{heroSubtitle.replace(heroPrice, '')}<span className="mt-5 block whitespace-nowrap font-bold text-[#86141a]">{heroPrice}</span></>
                             ) : heroSubtitle}
                         </p>
-                        <div className="mt-10 flex flex-col items-start gap-3">
-                            <Link to="/shop" className="btn-loom-solid">{t('hero.ctaGallery')} <ArrowRight className="w-4 h-4" /></Link>
+                        <div className="mt-6 flex flex-col items-start gap-3">
+                            <Link to="/shop" className="btn-loom-solid w-full rounded-md py-4 lg:w-auto">{t('hero.ctaGallery')} <ArrowRight className="h-5 w-5" /></Link>
                         </div>
-                        <div className="eyebrow mt-6 flex flex-col md:flex-row md:items-center gap-1.5 md:gap-0">
-                            <span>✓ 100% Original Mill Stamped</span>
-                            <span className="hidden md:inline mx-3">·</span>
-                            <span>✓ 10+ Years Trust</span>
-                            <span className="hidden md:inline mx-3">·</span>
-                            <span>✓ Limited Clearance Stock</span>
+                        <div className="mt-7 flex flex-col gap-4 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-foreground/80 lg:mt-6 lg:flex-row lg:items-center lg:gap-0">
+                            <span className="flex items-center gap-3"><MillStampIcon className="h-7 w-6 shrink-0 text-accent" />100% Original Mill Stamped</span>
+                            <span className="mx-3 hidden lg:inline">·</span>
+                            <span className="flex items-center gap-3"><ShieldCheck className="h-5 w-5 shrink-0 text-accent" strokeWidth={1.5} />10+ Years Trust</span>
+                            <span className="mx-3 hidden lg:inline">·</span>
+                            <span className="flex items-center gap-3"><Package className="h-5 w-5 shrink-0 text-accent" strokeWidth={1.5} />Limited Clearance Stock</span>
                         </div>
                     </div>
                 </div>
                 {/* Fade to background color at the bottom */}
-                <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background to-transparent pointer-events-none z-0" />
-                <div className="absolute bottom-4 left-0 right-0 flex justify-center z-10">
-                    <div className="thread-line h-px w-24 animate-pulse-thread" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-32 bg-gradient-to-t from-background via-background/75 to-transparent sm:h-40 lg:h-48" />
+                <div className="absolute bottom-3 left-0 right-0 flex justify-center z-10">
+                    <a href="#featured-fabrics" aria-label="Scroll to featured fabrics" className="text-white drop-shadow-md transition-opacity hover:opacity-75">
+                        <ChevronDown className="h-6 w-6 animate-bounce" />
+                    </a>
                 </div>
             </section>
 
-            <section className="py-12 lg:py-20">
+            <section id="featured-fabrics" className="py-12 lg:py-20">
                 <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
                     <div className="flex flex-col items-center justify-center mb-12 text-center lg:flex-row lg:items-end lg:justify-between lg:text-left">
                         <div>
-                            <p className="eyebrow mb-4">{t('gallery.eyebrow')}</p>
+                            <p className="eyebrow mb-4"><RaymondText logoClassName="h-[1.35em]">{t('gallery.eyebrow')}</RaymondText></p>
                             <h2 className="font-display text-4xl sm:text-5xl">{t('gallery.headline')}</h2>
                         </div>
                         <Link to="/shop" className="hidden sm:inline-flex btn-loom-ghost">{t('gallery.viewAll')} <ArrowRight className="w-4 h-4" /></Link>
@@ -158,9 +143,12 @@ export default function Home() {
 
             <section id="why-buy-it" className="bg-foreground py-14 text-background lg:py-24">
                 <div className="mx-auto max-w-[1100px] px-6 text-center lg:px-10">
-                    <p className="eyebrow mb-4">WHY BUY IT?</p>
+                    <p className="eyebrow mb-4"></p>
                     <h2 className="font-display text-4xl leading-tight text-balance sm:text-5xl lg:text-6xl">
-                        Raymond Quality. Just <span className="text-accent">₹400.</span>
+                        <span className="inline-flex items-center whitespace-nowrap">
+                            <RaymondWordmark className="mr-[0.12em] h-[0.72em]" />
+                            <span>Quality.</span>
+                        </span>{' '}Just ₹400
                     </h2>
                     <p className="mx-auto mt-7 max-w-2xl text-lg leading-relaxed text-background/75">
                         Why buy an entire thaan when you only need enough fabric for one shirt?
@@ -178,7 +166,7 @@ export default function Home() {
                             <p className="mt-1 text-sm text-background/60">Enough for 1 shirt</p>
                         </div>
                         <div className="border-t border-background/20 px-5 py-7 sm:border-r sm:border-t-0">
-                            <p className="font-display text-xl">Raymond fabric</p>
+                            <p className="font-display text-xl"><RaymondText logoClassName="h-[1em]">Raymond fabric</RaymondText></p>
                             <p className="mt-1 text-sm text-background/60">Genuine quality</p>
                         </div>
                         <div className="border-t border-background/20 px-5 py-7 sm:border-t-0">
@@ -204,7 +192,7 @@ export default function Home() {
                                     <Icon className="h-6 w-6" strokeWidth={1.5} />
                                 </div>
                                 <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-accent">{label}</p>
-                                <h3 className="mt-3 font-display text-2xl leading-tight">{title}</h3>
+                                <h3 className="mt-3 font-display text-2xl leading-tight"><RaymondText logoClassName="h-[0.95em]">{title}</RaymondText></h3>
                                 <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{desc}</p>
                             </div>
                         ))}
