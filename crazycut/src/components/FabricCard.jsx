@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Image } from '@/components/ui/image';
 import { formatINR } from '@/lib/format';
 import { ReviewSummary } from '@/components/Reviews';
+import RaymondWordmark from '@/components/RaymondWordmark';
 
 export default function FabricCard({ fabric }) {
   return (
@@ -21,7 +22,9 @@ export default function FabricCard({ fabric }) {
         </Link>
         <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
           <Link to={`/product/${fabric.id}`} className="min-w-0">
-            <h3 className="font-display text-xl leading-tight text-foreground break-words">{fabric.brand}</h3>
+            <h3 className="font-display text-xl leading-tight text-foreground break-words">
+              {fabric.brand?.toLowerCase() === 'raymond' ? <RaymondWordmark className="h-[1.05em]" /> : fabric.brand}
+            </h3>
             <p className="mt-1 break-words text-sm leading-snug text-muted-foreground">{fabric.name} <span className="font-mono text-[10px] uppercase tracking-[0.12em]">· {fabric.fabric_type}</span></p>
           </Link>
           <span className="self-start font-mono text-sm leading-snug text-foreground sm:shrink-0">{formatINR(fabric.price)}<span className="text-muted-foreground text-[10px]"> / 2-piece set</span></span>

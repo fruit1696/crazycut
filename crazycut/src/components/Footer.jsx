@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, MapPin } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { RaymondText } from '@/components/RaymondWordmark';
 
 const STORE_MAP_URL = 'https://www.google.com/maps/search/?api=1&query=Radha%20Vallabh%20Market%2C%20near%20Fawara%20Chowk%2C%20Khargone%2C%20Madhya%20Pradesh%20451001';
 
@@ -69,7 +70,7 @@ export default function Footer() {
             <div className="absolute bottom-6 left-6 right-6">
               <div className="inline-flex bg-background/95 backdrop-blur-md text-foreground px-4 py-2 font-mono text-[10px] uppercase tracking-[0.15em] items-center gap-2 shadow-lg border border-border">
                 <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-                100% Original Raymond & Premium Fabrics Guarantee
+                <RaymondText logoClassName="h-[1.3em]">100% Original Raymond Fabrics Guarantee</RaymondText>
               </div>
             </div>
           </div>
@@ -77,11 +78,11 @@ export default function Footer() {
 
         <div className="grid lg:grid-cols-2 gap-12 pb-12 border-b border-border text-center">
           <div>
-            <h2 className="font-display text-5xl sm:text-6xl leading-[0.95] text-balance">{t('footer.headline')}</h2>
+            <h2 className="font-display text-5xl sm:text-6xl leading-[0.95] text-balance"><RaymondText logoClassName="h-[0.8em]">{t('footer.headline')}</RaymondText></h2>
             <p className="mt-5 text-muted-foreground max-w-md mx-auto">{t('footer.newsletterDesc')}</p>
           </div>
           <div className="flex items-center justify-center gap-3 flex-wrap">
-            <Link to="/shop" className="btn-loom-solid">{t('footer.shopRaymond')} <ArrowRight className="w-4 h-4" /></Link>
+            <Link to="/shop" className="btn-loom-solid"><RaymondText reverse logoClassName="h-[1.3em]">{t('footer.shopRaymond')}</RaymondText> <ArrowRight className="w-4 h-4" /></Link>
           </div>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 py-12">
@@ -101,7 +102,7 @@ export default function Footer() {
           <div>
             <p className="eyebrow mb-4">{t('footer.atelierTitle')}</p>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link to="/shop" className="hover:text-foreground">{t('footer.studio')}</Link></li>
+              <li><Link to="/shop" className="hover:text-foreground"><RaymondText>{t('footer.studio')}</RaymondText></Link></li>
               <li><a href="/#how-it-works" className="hover:text-foreground">{t('footer.visualizeIt')}</a></li>
               <li><Link to="/orders" className="hover:text-foreground">{t('footer.orders')}</Link></li>
             </ul>

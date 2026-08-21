@@ -4,6 +4,7 @@ import { Image } from '@/components/ui/image';
 import { useCart } from '@/lib/cartStore';
 import { useAuth } from '@/lib/AuthContext';
 import { formatINR } from '@/lib/format';
+import { RaymondText } from '@/components/RaymondWordmark';
 
 export default function CartDrawer() {
   const { items, open, setOpen, updateQty, removeItem, subtotal } = useCart();
@@ -38,7 +39,7 @@ export default function CartDrawer() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-display text-lg leading-tight truncate">{item.fabric_name}</h3>
-                    <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent mt-1">2-piece Raymond shirt set</p>
+                    <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent mt-1"><RaymondText logoClassName="h-[1.2em]">2-piece Raymond shirt set</RaymondText></p>
                     <p className="font-mono text-sm text-foreground mt-2">{formatINR(item.price)} / 2-piece set</p>
                     <div className="flex items-center justify-between mt-3">
                       <div className="flex items-center border border-border">

@@ -61,14 +61,14 @@ export default function Navbar() {
   };
 
   return (
-    <header className={`fixed top-10 inset-x-0 z-40 transition-all duration-500 ${scrolled ? 'bg-background/85 backdrop-blur-md border-b border-border' : 'bg-transparent'}`}>
-      <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
-        <div className="flex items-center justify-between h-[72px]">
+    <header className={`fixed top-[54px] inset-x-0 z-40 transition-all duration-500 lg:top-10 ${scrolled ? 'bg-background/85 backdrop-blur-md border-b border-border' : 'bg-transparent'}`}>
+      <div className="mx-auto max-w-[1400px] px-[30px] lg:px-10">
+        <div className="flex h-[86px] items-center justify-between lg:h-[72px]">
           <Link to="/" className="flex flex-col">
-            <span className="font-display italic text-2xl tracking-tight leading-none">CrazyCutPiece</span>
+            <span className="font-display text-[1.65rem] italic leading-none tracking-tight text-[#86141a]">CrazyCutPiece</span>
   
           </Link>
-          <nav className="hidden md:flex items-center">
+          <nav className="hidden lg:flex items-center">
             {menuItems.map((item, i) => (
               <div key={item.label} className="flex items-center">
                 {i > 0 && <span className="thread-line-v w-px h-4 mx-6 opacity-60" />}
@@ -119,15 +119,15 @@ export default function Navbar() {
               <span className={isHi ? 'text-foreground' : 'text-foreground/40'}>हि</span>
             </button>
             <button onClick={() => setOpen(true)} aria-label="Open cart" className="relative inline-flex items-center gap-2">
-              <ShoppingBag className="w-[18px] h-[18px] text-foreground" />
-              <span className="font-mono text-[11px] tracking-[0.2em]">{count}</span>
+              <ShoppingBag className="h-[20px] w-[20px] text-[#86141a]" />
+              <span className="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-accent px-1 font-mono text-[10px] leading-none text-accent-foreground">{count}</span>
             </button>
-            <button className="md:hidden" onClick={() => setMobileOpen(v => !v)} aria-label="Menu">{mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}</button>
+            <button className="text-[#86141a] lg:hidden" onClick={() => setMobileOpen(v => !v)} aria-label="Menu">{mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}</button>
           </div>
         </div>
       </div>
       {mobileOpen && (
-        <div className="md:hidden border-t border-border bg-background/95 backdrop-blur-md max-h-[calc(100vh-112px)] overflow-y-auto">
+        <div className="border-t border-border bg-background/95 backdrop-blur-md max-h-[calc(100vh-140px)] overflow-y-auto lg:hidden">
           <div className="px-6 py-6 flex flex-col gap-5">
             {menuItems.map(item => (
               <div key={item.label} className="flex flex-col gap-2">
