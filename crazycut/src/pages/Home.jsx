@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, BadgeCheck, CheckCircle, ChevronDown, IndianRupee, MessageCircle, MousePointerClick, Package, Scissors, ShieldCheck, Shirt, Truck } from 'lucide-react';
 import { supabase, fabricToFrontend } from '@/api/supabaseClient';
@@ -13,6 +13,7 @@ export default function Home() {
     const [fabrics, setFabrics] = useState([]);
     const [loading, setLoading] = useState(true);
     const [parallax, setParallax] = useState({ x: 0, y: 0 });
+    const explainVideoRef = useRef(null);
     const { t } = useTranslation();
 
     useEffect(() => {
@@ -35,6 +36,31 @@ export default function Home() {
         return () => window.removeEventListener('mousemove', onMove);
     }, []);
 
+    useEffect(() => {
+        const video = explainVideoRef.current;
+        if (!video) return undefined;
+
+        const playVideo = () => {
+            video.defaultMuted = true;
+            video.muted = true;
+            const playPromise = video.play();
+            if (playPromise) {
+                playPromise.catch((error) => {
+                    if (error.name !== 'AbortError') {
+                        console.debug('How It Works video autoplay was blocked:', error);
+                    }
+                });
+            }
+        };
+
+        video.defaultMuted = true;
+        video.muted = true;
+        playVideo();
+        video.addEventListener('canplay', playVideo, { once: true });
+
+        return () => video.removeEventListener('canplay', playVideo);
+    }, []);
+
     const featured = fabrics.filter(f => f.featured).slice(0, 8);
     const heroSubtitle = t('hero.subtitle');
     const heroPrice = 'Starting at ₹400.';
@@ -46,10 +72,10 @@ export default function Home() {
     ];
 
     const howItWorksSteps = [
-        { icon: Package, label: 'STEP 1', title: '2 Pieces of Raymond Fabric', desc: 'What you receive' },
-        { icon: Scissors, label: 'STEP 2', title: 'Take It to Your Tailor', desc: 'Give the fabric to your trusted master cutter.' },
-        { icon: Shirt, label: 'STEP 3', title: 'Get Your Shirt Stitched', desc: 'Cut & sewn to order' },
-        { icon: CheckCircle, label: 'STEP 4', title: 'Your Shirt. Your Fit.', desc: 'Wear it your way' },
+        { icon: Package, label: '1', title: '2 Pieces of Raymond Fabric', desc: 'You receive two fabric pieces — together, they make one complete shirt.' },
+        { icon: Scissors, label: '2', title: 'Piece One : Front + Back', desc: 'The first piece forms the front and back of your shirt, creating the sleeveless shirt body.' },
+        { icon: Shirt, label: '3', title: 'Piece Two : Sleeves + Collar', desc: 'The second piece completes the shirt with the sleeves and collar.' },
+        { icon: CheckCircle, label: '4', title: 'Your Shirt. Your Fit.', desc: 'Take your fabric to your trusted tailor and have it stitched to your preferred fit.' },
     ];
 
     const howToOrderSteps = [
@@ -144,17 +170,18 @@ export default function Home() {
             <section id="why-buy-it" className="bg-foreground py-14 text-background lg:py-24">
                 <div className="mx-auto max-w-[1100px] px-6 text-center lg:px-10">
                     <p className="eyebrow mb-4"></p>
-                    <h2 className="font-display text-4xl leading-tight text-balance sm:text-5xl lg:text-6xl">
-                        <span className="inline-flex items-center whitespace-nowrap">
-                            <RaymondWordmark className="mr-[0.12em] h-[0.72em]" />
-                            <span>Quality.</span>
-                        </span>{' '}Just ₹400
+                    <h2 className="flex flex-nowrap items-center justify-center gap-[0.16em] whitespace-nowrap font-display text-[clamp(1.7rem,7vw,3.75rem)] leading-none">
+                        <span className="inline-flex h-[1em] shrink-0 items-center">
+                            <RaymondWordmark className="!h-[1em] !align-middle" />
+                        </span>
+                        <span className="inline-flex h-[1em] shrink-0 items-center">Quality.</span>
+                        <span className="inline-flex h-[1em] shrink-0 items-center">Just ₹400</span>
                     </h2>
                     <p className="mx-auto mt-7 max-w-2xl text-lg leading-relaxed text-background/75">
                         Why buy an entire thaan when you only need enough fabric for one shirt?
                     </p>
                     <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-background/75">
-                        Get <strong className="font-semibold text-background">1.8 metres of genuine Raymond fabric</strong> pre-cut into 2 pieces and ready to take to your tailor.
+                        Get <strong className="font-semibold text-background">Approx. 1.8 metres of genuine Raymond fabric, with a generous 57-inch width</strong> pre-cut into 2 pieces and ready to take to your tailor.
                     </p>
                     <p className="mt-7 font-display text-2xl sm:text-3xl">
                         Trusted brand. Affordable price.
@@ -162,8 +189,8 @@ export default function Home() {
 
                     <div className="mt-12 grid border-y border-background/20 sm:grid-cols-3">
                         <div className="px-5 py-7 sm:border-r sm:border-background/20">
-                            <p className="font-display text-xl">1.8 metres</p>
-                            <p className="mt-1 text-sm text-background/60">Enough for 1 shirt</p>
+                            <p className="font-display text-xl">1.8 metres × 58" width</p>
+                            <p className="mt-1 text-sm text-background/60">Enough fabric for 1 shirt</p>
                         </div>
                         <div className="border-t border-background/20 px-5 py-7 sm:border-r sm:border-t-0">
                             <p className="font-display text-xl"><RaymondText logoClassName="h-[1em]">Raymond fabric</RaymondText></p>
@@ -184,7 +211,24 @@ export default function Home() {
             <section id="how-it-works" className="py-12 lg:py-20">
                 <div className="mx-auto max-w-[1100px] px-6 lg:px-10 text-center">
                     <p className="eyebrow mb-4">HOW IT WORKS</p>
-                    <h2 className="font-display text-4xl sm:text-5xl leading-tight text-balance">From Fabric to Your Shirt</h2>
+                    <h2 className="font-display text-4xl sm:text-5xl leading-tight text-balance">2 Pieces. 1 Shirt.</h2>
+                    <div className="mx-auto mt-9 flex max-w-4xl items-center justify-center overflow-hidden rounded-xl border border-border bg-foreground shadow-[0_24px_70px_rgba(24,18,14,0.14)] sm:mt-10">
+                        <video
+                            ref={explainVideoRef}
+                            autoPlay
+                            muted
+                            loop
+                            playsInline
+                            {...{ 'webkit-playsinline': 'true' }}
+                            preload="auto"
+                            disablePictureInPicture
+                            disableRemotePlayback
+                            className="pointer-events-none block h-auto max-h-[62vh] w-full object-contain"
+                            aria-label="How Crazy Cut Piece fabric sets work"
+                        >
+                            <source src="/explain.mp4" type="video/mp4" />
+                        </video>
+                    </div>
                     <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
                         {howItWorksSteps.map(({ icon: Icon, label, title, desc }) => (
                             <div key={label} className="border-t border-border pt-6 px-2">

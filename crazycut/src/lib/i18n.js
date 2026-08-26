@@ -97,7 +97,7 @@ const resources = {
         linen: 'Linen',
         wool: 'Wool',
         atelierTitle: 'EXPLORE',
-        studio: 'Raymond Fabrics',
+        studio: 'Fabrics',
         visualizeIt: 'How It Works',
         orders: 'Orders',
         connectTitle: 'Connect',
