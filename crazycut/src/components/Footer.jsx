@@ -118,8 +118,8 @@ export default function Footer() {
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-border">
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">© {new Date().getFullYear()} CrazyCutPiece · crazycutpiece.com</p>
           <div className="flex gap-6 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-            <a href="/#atelier" className="hover:text-foreground">{t('footer.privacy')}</a>
-            <a href="/#atelier" className="hover:text-foreground">{t('footer.terms')}</a>
+            <Link to="/privacy" className="hover:text-foreground">{t('footer.privacy')}</Link>
+            <Link to="/terms" className="hover:text-foreground">{t('footer.terms')}</Link>
           </div>
         </div>
       </div>
