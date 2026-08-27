@@ -2,6 +2,9 @@ begin;
 
 lock table public.fabrics in access exclusive mode;
 
+alter table public.fabrics
+  add column if not exists archived boolean not null default false;
+
 do $$
 declare
   expected_ids uuid[] := array[
@@ -17,51 +20,18 @@ declare
   ];
   fabric_count integer;
   matching_count integer;
-  dependent_count integer;
-  foreign_key record;
 begin
   select count(*) into fabric_count from public.fabrics;
   select count(*) into matching_count from public.fabrics where id = any(expected_ids);
 
   if fabric_count <> 9 or matching_count <> 9 then
-    raise exception 'Fabric cleanup aborted: the catalog no longer contains exactly the nine inspected placeholder rows';
+    raise exception 'Fabric archival aborted: the catalog no longer contains exactly the nine inspected placeholder rows';
   end if;
-
-  for foreign_key in
-    select
-      constraint_schema,
-      table_schema,
-      table_name,
-      column_name
-    from information_schema.constraint_column_usage target
-    join information_schema.referential_constraints reference
-      on reference.unique_constraint_schema = target.constraint_schema
-     and reference.unique_constraint_name = target.constraint_name
-    join information_schema.key_column_usage source
-      on source.constraint_schema = reference.constraint_schema
-     and source.constraint_name = reference.constraint_name
-    where target.table_schema = 'public'
-      and target.table_name = 'fabrics'
-      and target.column_name = 'id'
-  loop
-    execute format(
-      'select count(*) from %I.%I where %I = any($1)',
-      foreign_key.table_schema,
-      foreign_key.table_name,
-      foreign_key.column_name
-    ) into dependent_count using expected_ids;
-
-    if dependent_count > 0 then
-      raise exception 'Fabric cleanup aborted: %.% contains % dependent row(s)',
-        foreign_key.table_schema,
-        foreign_key.table_name,
-        dependent_count;
-    end if;
-  end loop;
 end
 $$;
 
-delete from public.fabrics
+update public.fabrics
+set archived = true
 where id = any(array[
   'ee5a6d24-283c-491d-bb1d-0684c8ab7b19'::uuid,
   '3e6b643c-64a3-48f4-81e9-ca7a91da50b9'::uuid,

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, BadgeCheck, CheckCircle, ChevronDown, IndianRupee, MessageCircle, MousePointerClick, Package, Scissors, ShieldCheck, Shirt, Truck } from 'lucide-react';
+import { ArrowRight, BadgeCheck, ChevronDown, IndianRupee, MessageCircle, MousePointerClick, Package, Scissors, ShieldCheck, Truck } from 'lucide-react';
 import { supabase, fabricToFrontend } from '@/api/supabaseClient';
 import FabricCard from '@/components/FabricCard';
 import RaymondWordmark, { RaymondText } from '@/components/RaymondWordmark';
@@ -8,6 +8,25 @@ import MillStampIcon from '@/components/MillStampIcon';
 import { useTranslation } from 'react-i18next';
 import raymondImage from '../../raymond.jpeg';
 import pileImage from '../../pile.jpeg';
+
+function ShirtBodyPanelsIcon({ className, strokeWidth = 1.5 }) {
+    return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+            <path d="M8 3h2c0 1.4.75 2.25 2 2.25S14 4.4 14 3h2c0 2.1.85 3.45 2.5 4.25L17 21H7L5.5 7.25C7.15 6.45 8 5.1 8 3Z" />
+            <path d="M5.5 7.25C7.4 8 8.4 9.45 8.4 11M18.5 7.25C16.6 8 15.6 9.45 15.6 11" />
+        </svg>
+    );
+}
+
+function SleevesCollarIcon({ className, strokeWidth = 1.5 }) {
+    return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+            <path d="m8.5 4 2 2h3l2-2 4 2.25 2 4.25-3.25 1.75-1.1-1.75V21H6.85V10.5l-1.1 1.75L2.5 10.5l2-4.25L8.5 4Z" />
+            <path d="m8.5 4 1 4 2.5-2 2.5 2 1-4M6.85 10.5 4.5 6.25M17.15 10.5l2.35-4.25" />
+            <path d="m2.25 5.75-1.2-.65M3.7 3.9l-.55-1.25M20.3 3.9l.55-1.25M21.75 5.75l1.2-.65M10.25 1.75 10 0.5M13.75 1.75 14 .5" />
+        </svg>
+    );
+}
 
 export default function Home() {
     const [fabrics, setFabrics] = useState([]);
@@ -19,7 +38,7 @@ export default function Home() {
     useEffect(() => {
         (async () => {
             try {
-                const { data, error } = await supabase.from('fabrics').select('*').order('created_date', { ascending: false }).limit(50);
+                const { data, error } = await supabase.from('fabrics').select('*').eq('archived', false).order('created_date', { ascending: false }).limit(50);
                 if (error) throw new Error(error.message);
                 setFabrics((data || []).map(fabricToFrontend));
             }
@@ -73,9 +92,9 @@ export default function Home() {
 
     const howItWorksSteps = [
         { icon: Package, label: '1', title: '2 Pieces of Raymond Fabric', desc: 'You receive two fabric pieces — together, they make one complete shirt.' },
-        { icon: Scissors, label: '2', title: 'Piece One : Front + Back', desc: 'The first piece forms the front and back of your shirt, creating the sleeveless shirt body.' },
-        { icon: Shirt, label: '3', title: 'Piece Two : Sleeves + Collar', desc: 'The second piece completes the shirt with the sleeves and collar.' },
-        { icon: CheckCircle, label: '4', title: 'Your Shirt. Your Fit.', desc: 'Take your fabric to your trusted tailor and have it stitched to your preferred fit.' },
+        { icon: ShirtBodyPanelsIcon, label: '2', title: 'Piece One : Front + Back', desc: 'The first piece forms the front and back of your shirt, creating the sleeveless shirt body.' },
+        { icon: SleevesCollarIcon, label: '3', title: 'Piece Two : Sleeves + Collar', desc: 'The second piece completes the shirt with the sleeves and collar.' },
+        { icon: Scissors, label: '4', title: 'Your Shirt. Your Fit.', desc: 'Take your fabric to your trusted tailor and have it stitched to your preferred fit.' },
     ];
 
     const howToOrderSteps = [
