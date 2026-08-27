@@ -8,7 +8,7 @@ const CATEGORIES = [
     {
         title: 'Fabric & Quality',
         items: [
-            { q: 'What is the fabric composition?', a: 'Every cut piece lists its exact material composition — Rayon, Poly-Viscose, cotton blends, wool, linen or silk — alongside the weave type and width. Find these on each product page under Specifications, so you know precisely what your tailor is working with.' },
+            { q: 'What fabric details are listed?', a: 'Every cut piece lists its fabric type, color, pattern, weight, and width. Find these on each product page under Specifications, so you know precisely what your tailor is working with.' },
             { q: 'How do I know the fabric thickness/weight?', a: 'Each fabric is tagged Lightweight, Midweight or Heavyweight. Lightweight cloth breathes for summer shirts; heavyweight wool holds structure for blazers and trousers. The weight appears on the product card and in the spec table.' },
             { q: 'Is the fabric suitable for shirts, pants, blazers, etc.?', a: 'Yes — most cut pieces are versatile. On every product page, the "What Can Be Stitched?" gallery shows the garments each cloth is suited to, and the "Visualize It" studio lets you preview the drape on a shirt or trouser before you buy.' },
             { q: 'Will the color look exactly like the photos?', a: 'We photograph fabrics flat-lit to show true color and weave, but screens render tones differently and natural dyes shift with light. Expect a close, honest match — never an exact pixel-for-pixel one. Our detail image helps you read the true shade.' },

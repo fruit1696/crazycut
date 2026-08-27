@@ -26,7 +26,7 @@ export function CartProvider({ children }) {
         return next;
       }
       return [...prev, {
-        key, fabric_id: fabric.id, fabric_name: fabric.name, brand: fabric.brand, price: fabric.price,
+        key, fabric_id: fabric.id, fabric_name: fabric.name, price: fabric.price,
         quantity, image_url: fabric.image_url
       }];
     });
