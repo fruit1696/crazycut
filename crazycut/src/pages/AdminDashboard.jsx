@@ -20,7 +20,7 @@ export default function AdminDashboard() {
         { data: fData, error: fError },
         { data: oData, error: oError }
       ] = await Promise.all([
-        supabase.from('fabrics').select('*').order('created_date', { ascending: false }).limit(200),
+        supabase.from('fabrics').select('*').eq('archived', false).order('created_date', { ascending: false }).limit(200),
         supabase.from('orders').select('*, items:order_items(*)').order('created_date', { ascending: false }).limit(200)
       ]);
       

@@ -100,7 +100,7 @@ export default function Shop() {
     useEffect(() => {
         (async () => {
             try {
-                const { data, error } = await supabase.from('fabrics').select('*').order('created_date', { ascending: false }).limit(100);
+                const { data, error } = await supabase.from('fabrics').select('*').eq('archived', false).order('created_date', { ascending: false }).limit(100);
                 if (error) throw new Error(error.message);
                 setFabrics((data || []).map(fabricToFrontend));
             }

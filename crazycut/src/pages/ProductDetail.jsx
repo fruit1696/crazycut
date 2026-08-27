@@ -24,7 +24,7 @@ export default function ProductDetail() {
     useEffect(() => {
         (async () => {
             try { 
-                const { data, error } = await supabase.from('fabrics').select('*').eq('id', id).single();
+                const { data, error } = await supabase.from('fabrics').select('*').eq('id', id).eq('archived', false).single();
                 if (error) throw new Error(error.message);
                 setFabric(fabricToFrontend(data)); 
             }

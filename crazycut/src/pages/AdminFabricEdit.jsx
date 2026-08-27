@@ -8,31 +8,7 @@ const TYPES = ['Silk', 'Cotton', 'Linen', 'Wool', 'Blend'];
 const PATTERNS = ['Solid', 'Striped', 'Floral', 'Geometric', 'Jacquard'];
 const WEIGHTS = ['Lightweight', 'Midweight', 'Heavyweight'];
 
-const empty = { name: '', description: '', price: 0, fabric_type: 'Cotton', color: '', pattern: 'Solid', weight: 'Midweight', image_url: '', detail_image_url: '', width_inches: 58, stock_quantity: 0, featured: false, sku: '' };
-
-const normalizeSku = (sku) => {
-    const normalized = String(sku || '').trim();
-    return normalized || null;
-};
-
-async function generateSku() {
-    const { data, error } = await supabase.from('fabrics').select('sku').not('sku', 'is', null);
-    if (error) throw new Error(error.message);
-
-    const usedSkus = new Set((data || []).map(row => normalizeSku(row.sku)).filter(Boolean));
-    const highestNumber = (data || []).reduce((highest, row) => {
-        const match = normalizeSku(row.sku)?.match(/^CCP-(\d+)$/i);
-        return match ? Math.max(highest, Number(match[1])) : highest;
-    }, 0);
-
-    let nextNumber = highestNumber + 1;
-    let candidate = `CCP-${String(nextNumber).padStart(4, '0')}`;
-    while (usedSkus.has(candidate)) {
-        nextNumber += 1;
-        candidate = `CCP-${String(nextNumber).padStart(4, '0')}`;
-    }
-    return candidate;
-}
+const empty = { name: '', description: '', price: 0, fabric_type: 'Cotton', color: '', pattern: 'Solid', weight: 'Midweight', image_url: '', detail_image_url: '', width_inches: 58, stock_quantity: 0, featured: false };
 
 function Field({ label, options, value, onChange }) {
     return (
@@ -58,7 +34,7 @@ export default function AdminFabricEdit() {
         if (!id) return;
         (async () => {
             try { 
-                const { data, error } = await supabase.from('fabrics').select('*').eq('id', id).single();
+                const { data, error } = await supabase.from('fabrics').select('*').eq('id', id).eq('archived', false).single();
                 if (error) throw new Error(error.message);
                 const f = fabricToFrontend(data);
                 setForm({ ...empty, ...f }); 
@@ -91,25 +67,13 @@ export default function AdminFabricEdit() {
         savingRef.current = true;
         setSaving(true);
         try {
-            const payload = { ...form, price: Number(form.price), width_inches: Number(form.width_inches), stock_quantity: Number(form.stock_quantity), featured: Boolean(form.featured), sku: normalizeSku(form.sku) };
+            const payload = { ...form, price: Number(form.price), width_inches: Number(form.width_inches), stock_quantity: Number(form.stock_quantity), featured: Boolean(form.featured) };
+            delete payload.sku;
             if (editing) {
                 const { error } = await supabase.from('fabrics').update(fabricToDb(payload)).eq('id', id);
                 if (error) throw new Error(error.message);
             } else {
-                const requestedSku = payload.sku;
-                const sku = requestedSku || await generateSku();
-                const { data: existingFabric, error: existingSkuError } = requestedSku
-                    ? await supabase.from('fabrics').select('id').eq('sku', requestedSku).maybeSingle()
-                    : { data: null, error: null };
-                if (existingSkuError) throw new Error(existingSkuError.message);
-                if (existingFabric) throw new Error(`SKU ${requestedSku} already exists.`);
-
-                const insertPayload = fabricToDb({ ...payload, sku });
-                let { error } = await supabase.from('fabrics').insert(insertPayload);
-                if (error?.code === '23505' && !requestedSku) {
-                    const retrySku = await generateSku();
-                    ({ error } = await supabase.from('fabrics').insert(fabricToDb({ ...payload, sku: retrySku })));
-                }
+                const { error } = await supabase.from('fabrics').insert(fabricToDb(payload));
                 if (error) throw new Error(error.message);
             }
             navigate('/admin');
@@ -140,7 +104,6 @@ export default function AdminFabricEdit() {
                         <div className="grid grid-cols-2 gap-4">
                             <label className="block"><span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Color</span><input value={form.color} onChange={e => set('color', e.target.value)} className="mt-1 w-full bg-transparent border-b border-border py-2 focus:border-accent focus:outline-none" /></label>
                             <label className="block"><span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Width (in)</span><input type="number" value={form.width_inches} onChange={e => set('width_inches', e.target.value)} className="mt-1 w-full bg-transparent border-b border-border py-2 focus:border-accent focus:outline-none" /></label>
-                            <label className="block"><span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">SKU</span><input value={form.sku} onChange={e => set('sku', e.target.value)} className="mt-1 w-full bg-transparent border-b border-border py-2 focus:border-accent focus:outline-none" /></label>
                         </div>
                         <label className="flex items-center gap-3 cursor-pointer"><input type="checkbox" checked={form.featured} onChange={e => set('featured', e.target.checked)} className="w-4 h-4 accent-[hsl(var(--accent))]" /><span className="font-mono text-xs uppercase tracking-[0.18em]">Featured on homepage</span></label>
                     </div>

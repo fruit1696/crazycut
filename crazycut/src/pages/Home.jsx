@@ -19,7 +19,7 @@ export default function Home() {
     useEffect(() => {
         (async () => {
             try {
-                const { data, error } = await supabase.from('fabrics').select('*').order('created_date', { ascending: false }).limit(50);
+                const { data, error } = await supabase.from('fabrics').select('*').eq('archived', false).order('created_date', { ascending: false }).limit(50);
                 if (error) throw new Error(error.message);
                 setFabrics((data || []).map(fabricToFrontend));
             }

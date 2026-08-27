@@ -9,7 +9,5 @@ export const fabricToFrontend = (row) => row;
 
 export const fabricToDb = (payload) => {
   if (!payload) return payload;
-  const mapped = { ...payload };
-  if (typeof mapped.sku === 'string' && mapped.sku.trim() === '') mapped.sku = null;
-  return mapped;
+  return { ...payload };
 };
