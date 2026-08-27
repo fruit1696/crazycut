@@ -1,14 +1,39 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { X } from 'lucide-react';
 
 const PHONE = '919425333460';
 
 export default function WhatsAppWidget() {
+  const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
+  const [heroVisible, setHeroVisible] = useState(pathname === '/');
   const msg = encodeURIComponent("Hi! I have a question about the cut-piece fabrics at CrazyCutPiece.");
 
+  useEffect(() => {
+    if (pathname !== '/') {
+      setHeroVisible(false);
+      return undefined;
+    }
+
+    const hero = document.getElementById('landing-hero');
+    if (!hero) {
+      setHeroVisible(false);
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      setHeroVisible(entry.isIntersecting);
+      if (entry.isIntersecting) setOpen(false);
+    });
+    observer.observe(hero);
+    return () => observer.disconnect();
+  }, [pathname]);
+
+  if (heroVisible) return null;
+
   return (
-    <div className="fixed bottom-5 right-5 z-40 flex flex-col items-end">
+    <div className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] right-5 z-40 flex flex-col items-end lg:bottom-5">
       {open && (
         <div className="mb-3 w-72 bg-background border border-border shadow-2xl animate-scale-in overflow-hidden">
           <div className="bg-[#128C7E] text-white px-4 py-3 flex items-center justify-between">
