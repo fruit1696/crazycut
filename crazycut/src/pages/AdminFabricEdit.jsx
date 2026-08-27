@@ -3,14 +3,12 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Upload, Loader2 } from 'lucide-react';
 import { supabase, fabricToFrontend, fabricToDb } from '@/api/supabaseClient';
 import { Image } from '@/components/ui/image';
-import { BRANDS } from '@/lib/brands';
 
 const TYPES = ['Silk', 'Cotton', 'Linen', 'Wool', 'Blend'];
-const FAMILIES = ['Black', 'White', 'Grey', 'Brown', 'Beige', 'Blue', 'Green', 'Red', 'Pink', 'Yellow', 'Orange', 'Purple'];
 const PATTERNS = ['Solid', 'Striped', 'Floral', 'Geometric', 'Jacquard'];
 const WEIGHTS = ['Lightweight', 'Midweight', 'Heavyweight'];
 
-const empty = { name: '', description: '', price: 0, brand: '', fabric_type: 'Cotton', weave_type: '', color: '', color_family: 'Beige', pattern: 'Solid', weight: 'Midweight', image_url: '', detail_image_url: '', material_composition: '', width_inches: 58, origin: '', stock_quantity: 0, featured: false, sku: '' };
+const empty = { name: '', description: '', price: 0, fabric_type: 'Cotton', color: '', pattern: 'Solid', weight: 'Midweight', image_url: '', detail_image_url: '', width_inches: 58, stock_quantity: 0, featured: false, sku: '' };
 
 const normalizeSku = (sku) => {
     const normalized = String(sku || '').trim();
@@ -132,23 +130,18 @@ export default function AdminFabricEdit() {
                         <label className="block"><span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Description</span><textarea required value={form.description} onChange={e => set('description', e.target.value)} rows={3} className="mt-1 w-full bg-transparent border-b border-border py-2 focus:border-accent focus:outline-none resize-none" /></label>
                         <div className="grid grid-cols-2 gap-4">
                             <label className="block"><span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Price / 2-piece set (₹)</span><input required type="number" step="0.01" value={form.price} onChange={e => set('price', e.target.value)} className="mt-1 w-full bg-transparent border-b border-border py-2 focus:border-accent focus:outline-none font-display text-xl" /></label>
-                            <label className="block"><span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Stock (m)</span><input type="number" value={form.stock_quantity} onChange={e => set('stock_quantity', e.target.value)} className="mt-1 w-full bg-transparent border-b border-border py-2 focus:border-accent focus:outline-none font-display text-xl" /></label>
+                            <label className="block"><span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Stock (sets)</span><input type="number" value={form.stock_quantity} onChange={e => set('stock_quantity', e.target.value)} className="mt-1 w-full bg-transparent border-b border-border py-2 focus:border-accent focus:outline-none font-display text-xl" /></label>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <Field label="Fabric type" options={TYPES} value={form.fabric_type} onChange={v => set('fabric_type', v)} />
                             <Field label="Pattern" options={PATTERNS} value={form.pattern} onChange={v => set('pattern', v)} />
-                            <Field label="Color family" options={FAMILIES} value={form.color_family} onChange={v => set('color_family', v)} />
                             <Field label="Weight" options={WEIGHTS} value={form.weight} onChange={v => set('weight', v)} />
                         </div>
-                        <Field label="Brand" options={['', ...BRANDS]} value={form.brand} onChange={v => set('brand', v)} />
                         <div className="grid grid-cols-2 gap-4">
-                            <label className="block"><span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Weave</span><input value={form.weave_type} onChange={e => set('weave_type', e.target.value)} className="mt-1 w-full bg-transparent border-b border-border py-2 focus:border-accent focus:outline-none" /></label>
                             <label className="block"><span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Color</span><input value={form.color} onChange={e => set('color', e.target.value)} className="mt-1 w-full bg-transparent border-b border-border py-2 focus:border-accent focus:outline-none" /></label>
                             <label className="block"><span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Width (in)</span><input type="number" value={form.width_inches} onChange={e => set('width_inches', e.target.value)} className="mt-1 w-full bg-transparent border-b border-border py-2 focus:border-accent focus:outline-none" /></label>
                             <label className="block"><span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">SKU</span><input value={form.sku} onChange={e => set('sku', e.target.value)} className="mt-1 w-full bg-transparent border-b border-border py-2 focus:border-accent focus:outline-none" /></label>
                         </div>
-                        <label className="block"><span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Material composition</span><input value={form.material_composition} onChange={e => set('material_composition', e.target.value)} className="mt-1 w-full bg-transparent border-b border-border py-2 focus:border-accent focus:outline-none" /></label>
-                        <label className="block"><span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Origin</span><input value={form.origin} onChange={e => set('origin', e.target.value)} className="mt-1 w-full bg-transparent border-b border-border py-2 focus:border-accent focus:outline-none" /></label>
                         <label className="flex items-center gap-3 cursor-pointer"><input type="checkbox" checked={form.featured} onChange={e => set('featured', e.target.checked)} className="w-4 h-4 accent-[hsl(var(--accent))]" /><span className="font-mono text-xs uppercase tracking-[0.18em]">Featured on homepage</span></label>
                     </div>
                     <div>

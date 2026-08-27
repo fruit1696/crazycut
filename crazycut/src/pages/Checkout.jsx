@@ -50,7 +50,7 @@ export default function Checkout() {
             const { error: orderErr } = await supabase.from('orders').insert(orderData);
             if (orderErr) throw new Error(orderErr.message);
 
-            const itemsPayload = items.map(i => ({ fabric_id: i.fabric_id, fabric_name: i.fabric_name, brand: i.brand, price: i.price, quantity: i.quantity, image_url: i.image_url, order_id: orderId }));
+            const itemsPayload = items.map(i => ({ fabric_id: i.fabric_id, fabric_name: i.fabric_name, price: i.price, quantity: i.quantity, image_url: i.image_url, order_id: orderId }));
             if (itemsPayload.length > 0) {
                 const { error: itemsErr } = await supabase.from('order_items').insert(itemsPayload);
                 if (itemsErr) throw new Error(itemsErr.message);

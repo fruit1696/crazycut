@@ -6,7 +6,7 @@ import { Image } from '@/components/ui/image';
 import { formatINR } from '@/lib/format';
 import { useCart } from '@/lib/cartStore';
 import Reviews, { ReviewSummary } from '@/components/Reviews';
-import RaymondWordmark, { RaymondText } from '@/components/RaymondWordmark';
+import { RaymondText } from '@/components/RaymondWordmark';
 
 import { useTranslation } from 'react-i18next';
 
@@ -43,10 +43,11 @@ export default function ProductDetail() {
     if (!fabric) return <div className="pt-[112px] min-h-screen flex flex-col items-center justify-center gap-4"><p className="font-display text-4xl">{t('product.notFound')}</p><Link to="/shop" className="btn-loom-ghost">{t('product.backToGallery')}</Link></div>;
 
     const specs = [
-        [t('product.specMaterial'), fabric.material_composition],
+        [t('product.specMaterial'), fabric.fabric_type],
         [t('product.specColor'), fabric.color],
         [t('product.specWeight'), fabric.weight],
         [t('product.specPattern'), fabric.pattern],
+        [t('product.specWidth'), fabric.width_inches ? `${fabric.width_inches} in` : null],
     ];
 
     return (
@@ -65,8 +66,7 @@ export default function ProductDetail() {
                     </div>
                     <div className="lg:py-4">
                         <p className="eyebrow mb-4 flex items-center gap-2">
-                            {fabric.brand?.toLowerCase() === 'raymond' ? <RaymondWordmark className="h-[1.35em]" /> : fabric.brand}
-                            <span>· {fabric.sku}</span>
+                            <span>{fabric.sku}</span>
                         </p>
                         <Link to="#reviews" className="inline-flex mb-4 rounded-sm hover:opacity-80" aria-label="Read customer reviews">
                             <ReviewSummary fabricId={fabric.id} />

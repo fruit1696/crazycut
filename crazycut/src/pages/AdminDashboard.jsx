@@ -89,17 +89,16 @@ export default function AdminDashboard() {
           <div className="border border-border overflow-x-auto">
             <table className="w-full min-w-[720px]">
               <thead><tr className="border-b border-border">
-                {['Fabric', 'Brand', 'Type', 'Pattern', 'Price', 'Stock', 'Actions'].map(h => <th key={h} className="text-left font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground px-4 py-3">{h}</th>)}
+                {['Fabric', 'Type', 'Pattern', 'Price / set', 'Stock (sets)', 'Actions'].map(h => <th key={h} className="text-left font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground px-4 py-3">{h}</th>)}
               </tr></thead>
               <tbody>
                 {fabrics.map(f => (
                   <tr key={f.id} className="border-b border-border last:border-0">
                     <td className="px-4 py-3"><div className="flex items-center gap-3"><div className="w-10 h-12 overflow-hidden bg-muted"><Image src={f.image_url} fittingType="fill" className="w-full h-full" /></div><span className="font-display text-base">{f.name}</span></div></td>
-                    <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{f.brand}</td>
                     <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{f.fabric_type}</td>
                     <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{f.pattern}</td>
                     <td className="px-4 py-3 font-mono text-sm">{formatINR(f.price)}</td>
-                    <td className="px-4 py-3 font-mono text-sm">{f.stock_quantity}m</td>
+                    <td className="px-4 py-3 font-mono text-sm">{f.stock_quantity}</td>
                     <td className="px-4 py-3"><div className="flex gap-3"><Link to={`/admin/fabric/${f.id}`} className="hover:text-accent"><Pencil className="w-4 h-4" /></Link><button onClick={() => deleteFabric(f.id)} className="hover:text-destructive"><Trash2 className="w-4 h-4" /></button></div></td>
                   </tr>
                 ))}
