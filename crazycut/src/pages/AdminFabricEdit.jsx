@@ -112,12 +112,12 @@ export default function AdminFabricEdit() {
                         {form.image_url ? <div className="aspect-[4/5] overflow-hidden bg-muted mb-3"><Image src={form.image_url} fittingType="fill" className="w-full h-full" /></div> : <div className="aspect-[4/5] bg-muted flex items-center justify-center text-muted-foreground font-mono text-xs mb-3">No image</div>}
                         <label className="flex items-center justify-center gap-2 border border-dashed border-border py-4 cursor-pointer hover:border-foreground mb-3">
                             {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                            <span className="font-mono text-[10px] uppercase tracking-[0.2em]">Upload primary swatch</span>
+                            <span className="font-mono text-[10px] uppercase tracking-[0.2em]">Upload 2 piece photo</span>
                             <input type="file" accept="image/*" className="hidden" onChange={e => upload(e, 'image_url')} />
                         </label>
                         <label className="flex items-center justify-center gap-2 border border-dashed border-border py-4 cursor-pointer hover:border-foreground">
                             {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                            <span className="font-mono text-[10px] uppercase tracking-[0.2em]">Upload detail</span>
+                            <span className="font-mono text-[10px] uppercase tracking-[0.2em]">Upload More Photos</span>
                             <input type="file" accept="image/*" className="hidden" onChange={e => upload(e, 'detail_image_url')} />
                         </label>
                         <button type="submit" disabled={saving || uploading} className="btn-loom-solid w-full mt-8 disabled:opacity-50">{saving ? 'Saving…' : editing ? 'Update cut piece' : 'Publish cut piece'}</button>

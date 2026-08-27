@@ -63,8 +63,8 @@ export default function AdminDashboard() {
         <Link to="/" className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground mb-8"><ArrowLeft className="w-4 h-4" />Back to store</Link>
         <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
           <div>
-            <p className="eyebrow mb-3">Atelier Control</p>
-            <h1 className="font-display text-5xl">Admin loom</h1>
+            <p className="eyebrow mb-3">Store Settings</p>
+            <h1 className="font-display text-5xl">Admin Control</h1>
           </div>
           <Link to="/admin/fabric/new" className="btn-loom-solid"><Plus className="w-4 h-4" /> Add cut piece</Link>
         </div>
